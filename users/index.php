@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../middleware.php';
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/company_helper.php';
 
 // Check if user is Admin
 if ($_SESSION['role'] !== 'admin') {
@@ -8,7 +9,9 @@ if ($_SESSION['role'] !== 'admin') {
     exit;
 }
 
-$stmt = $pdo->query("SELECT id, username, email, `role`, created_at FROM users where role = 'user'");
+$company_id = get_current_company_id();
+$stmt = $pdo->prepare("SELECT id, username, email, `role`, created_at FROM users WHERE role = 'user' AND company_id = ?");
+$stmt->execute([$company_id]);
 $users = $stmt->fetchAll();
 ?>
 

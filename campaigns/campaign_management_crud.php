@@ -4,6 +4,7 @@ require_once __DIR__ . '/../middleware.php';
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../config/validationHelper.php';
 require_once __DIR__ . '/../config/constants.php';
+require_once __DIR__ . '/../users/company_helper.php';
 
 // Check if user is logged in and has access
 if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'user') {
@@ -55,10 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $base_url = trim($_POST['base_url']);
             $verification_frequency = trim($_POST['verification_frequency']);
             $user_id = $_SESSION['user_id'];
+            $company_id = get_current_company_id();
 
             //check if campaign is already available with the same base URL
-            $stmt = $pdo->prepare("SELECT EXISTS(SELECT 1 FROM campaigns WHERE base_url = ?) as campaign_exists");
-            $stmt->execute([$base_url]);
+            $stmt = $pdo->prepare("SELECT EXISTS(SELECT 1 FROM campaigns WHERE base_url = ? AND company_id = ?) as campaign_exists");
+            $stmt->execute([$base_url, $company_id]);
             $exists = $stmt->fetchColumn();
             if ($exists) {
                 echo json_encode([
@@ -71,13 +73,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-            $stmt = $pdo->prepare("INSERT INTO campaigns (user_id, `name`, base_url, verification_frequency, created_at) VALUES (?, ?, ?, ?, NOW())");
-            $stmt->execute([$user_id, $campaign_name, $base_url, $verification_frequency]);
+            $stmt = $pdo->prepare("INSERT INTO campaigns (company_id, user_id, `name`, base_url, verification_frequency, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
+            $stmt->execute([$company_id, $user_id, $campaign_name, $base_url, $verification_frequency]);
 
             // Fetch the newly created campaign
             $campaign_id = $pdo->lastInsertId();
-            $stmt = $pdo->prepare("SELECT * FROM campaigns WHERE id = ?");
-            $stmt->execute([$campaign_id]);
+            $stmt = $pdo->prepare("SELECT * FROM campaigns WHERE id = ? AND company_id = ?");
+            $stmt->execute([$campaign_id, $company_id]);
             $campaign = $stmt->fetch(PDO::FETCH_ASSOC);
 
             echo json_encode([
@@ -120,9 +122,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $campaign_id = intval($_POST['campaign_id']);
             $campaign_name = trim($_POST['campaign_name']);
             $verification_frequency = trim($_POST['verification_frequency']);
+            $company_id = get_current_company_id();
 
             // Check if campaign exists and user has permission
-            if ($_SESSION['role'] === 'admin' || checkCampaignOwnership($campaign_id, $_SESSION['user_id'])) {
+            if ($_SESSION['role'] === 'admin' || checkCampaignOwnership($campaign_id, $_SESSION['user_id'], $company_id)) {
                 // Validate inputs
                 if (empty($campaign_name) || empty($verification_frequency)) {
                     http_response_code(400);
@@ -142,12 +145,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $status = in_array($_POST['status'], array_keys($campaign_statuses)) ? $_POST['status'] : $status;
                 }
 
-                $stmt = $pdo->prepare("UPDATE campaigns SET `name` = ?, verification_frequency = ?, `status` = ?, updated_at = NOW() WHERE id = ?");
-                $stmt->execute([$campaign_name, $verification_frequency, $status, $campaign_id]);
+                $stmt = $pdo->prepare("UPDATE campaigns SET `name` = ?, verification_frequency = ?, `status` = ?, updated_at = NOW() WHERE id = ? AND company_id = ?");
+                $stmt->execute([$campaign_name, $verification_frequency, $status, $campaign_id, $company_id]);
 
                 // Fetch updated campaign data
-                $stmt = $pdo->prepare("SELECT * FROM campaigns WHERE id = ?");
-                $stmt->execute([$campaign_id]);
+                $stmt = $pdo->prepare("SELECT * FROM campaigns WHERE id = ? AND company_id = ?");
+                $stmt->execute([$campaign_id, $company_id]);
                 $campaign = $stmt->fetch(PDO::FETCH_ASSOC);
 
                 if ($campaign) {
@@ -193,13 +196,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action']) && $_POST['action'] === 'delete_campaign') {
         try {
             $campaign_id = intval($_POST['campaign_id']);
+            $company_id = get_current_company_id();
 
             // Check ownership
             if ($_SESSION['role'] !== 'admin') {
 
                 //checkOwnership use function
 
-                $ownership = checkCampaignOwnership($campaign_id, $_SESSION['user_id']);
+                $ownership = checkCampaignOwnership($campaign_id, $_SESSION['user_id'], $company_id);
 
                 if (empty($ownership)) {
                     echo json_encode([
@@ -211,8 +215,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             // Delete the campaign
-            $stmt = $pdo->prepare("DELETE FROM campaigns WHERE id = ?");
-            $stmt->execute([$campaign_id]);
+            $stmt = $pdo->prepare("DELETE FROM campaigns WHERE id = ? AND company_id = ?");
+            $stmt->execute([$campaign_id, $company_id]);
 
             echo json_encode([
                 'success' => true,
@@ -231,12 +235,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Function to check campaign ownership
-function checkCampaignOwnership($campaign_id, $user_id)
+function checkCampaignOwnership($campaign_id, $user_id, $company_id)
 {
     global $pdo;
     try {
-        $stmt = $pdo->prepare("SELECT id FROM campaigns WHERE id = ? AND user_id = ?");
-        $stmt->execute([$campaign_id, $user_id]);
+        $stmt = $pdo->prepare("SELECT id FROM campaigns WHERE id = ? AND user_id = ? AND company_id = ?");
+        $stmt->execute([$campaign_id, $user_id, $company_id]);
         return $stmt->fetch() ? true : false;
     } catch (PDOException $e) {
         return false;

@@ -10,16 +10,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
 
     try {
-
-
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ? LIMIT 1");
+        $stmt = $pdo->prepare("
+            SELECT u.*, c.status as company_status, c.name as company_name 
+            FROM users u 
+            JOIN companies c ON u.company_id = c.id 
+            WHERE u.email = ? 
+            LIMIT 1
+        ");
         $stmt->execute([$email]);
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password'])) {
+            if ($user['company_status'] !== 'active') {
+                header("Location:" . BASE_URL . "login.php?error=Company account is not active");
+                exit;
+            }
+
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['role'] = $user['role'];
             $_SESSION['username'] = $user['username'];
+            $_SESSION['company_id'] = $user['company_id'];
+            $_SESSION['company_name'] = $user['company_name'];
+
             header("Location:" . BASE_URL . "dashboard.php");
             exit;
         } else {
@@ -30,7 +42,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Database error: " . $e->getMessage());
     }
 } else {
-
     header("Location:" . BASE_URL . "login.php?error=form not posted");
     exit;
 }

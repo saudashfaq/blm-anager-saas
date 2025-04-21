@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../middleware.php';
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../config/validationHelper.php';
+require_once __DIR__ . '/company_helper.php';
 
 
 // Function to validate form data
@@ -34,8 +35,9 @@ function validateUserData(array $data, bool $isUpdate = false): ValidationHelper
 function checkDuplicates(PDO $pdo, string $username, string $email, int $id): bool
 {
     try {
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE (username = ? OR email = ?) AND id != ?");
-        $stmt->execute([$username, $email, $id]);
+        $company_id = get_current_company_id();
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE (username = ? OR email = ?) AND id != ? AND company_id = ?");
+        $stmt->execute([$username, $email, $id, $company_id]);
         return $stmt->fetch() !== false;
     } catch (PDOException $e) {
         sendErrorResponse(500, 'Error checking duplicates: ' . $e->getMessage());
@@ -47,13 +49,14 @@ function checkDuplicates(PDO $pdo, string $username, string $email, int $id): bo
 function createUser(PDO $pdo, string $username, string $email, string $password, string $role): void
 {
     try {
+        $company_id = get_current_company_id();
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-        $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role, created_at) VALUES (?, ?, ?, ?, NOW())");
-        $stmt->execute([$username, $email, $hashedPassword, $role]);
+        $stmt = $pdo->prepare("INSERT INTO users (company_id, username, email, password, role, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
+        $stmt->execute([$company_id, $username, $email, $hashedPassword, $role]);
 
         $newId = $pdo->lastInsertId();
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE id = ?");
-        $stmt->execute([$newId]);
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE id = ? AND company_id = ?");
+        $stmt->execute([$newId, $company_id]);
         if (!$stmt->fetch()) {
             throw new Exception('Failed to create user');
         }
@@ -69,11 +72,12 @@ function createUser(PDO $pdo, string $username, string $email, string $password,
 function updateUser(PDO $pdo, int $id, string $username, string $email, string $role): void
 {
     try {
-        $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, role = ? WHERE id = ?");
-        $stmt->execute([$username, $email, $role, $id]);
+        $company_id = get_current_company_id();
+        $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, role = ? WHERE id = ? AND company_id = ?");
+        $stmt->execute([$username, $email, $role, $id, $company_id]);
 
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE id = ?");
-        $stmt->execute([$id]);
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE id = ? AND company_id = ?");
+        $stmt->execute([$id, $company_id]);
         if (!$stmt->fetch()) {
             throw new Exception('Failed to update user');
         }

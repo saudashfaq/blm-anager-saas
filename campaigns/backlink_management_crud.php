@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../middleware.php';
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../generalfunctions/general_functions.php';
+require_once __DIR__ . '/../users/company_helper.php';
 
 header('Content-Type: application/json');
 header('X-CSRF-TOKEN: ' . $_SESSION['csrf_token']);
@@ -11,6 +12,7 @@ $response = ['success' => false, 'message' => ''];
 try {
     $method = $_SERVER['REQUEST_METHOD'];
     $backlinkUtils = new BacklinkUtils($pdo);
+    $company_id = get_current_company_id();
 
     if ($method === 'POST') {
         // Add a new backlink
@@ -39,9 +41,9 @@ try {
             throw new Exception('Invalid backlink URL');
         }
 
-        // Check if the campaign exists
-        $stmt = $pdo->prepare("SELECT id FROM campaigns WHERE id = ?");
-        $stmt->execute([$campaignId]);
+        // Check if the campaign exists and belongs to the company
+        $stmt = $pdo->prepare("SELECT id FROM campaigns WHERE id = ? AND company_id = ?");
+        $stmt->execute([$campaignId, $company_id]);
         if (!$stmt->fetch()) {
             throw new Exception('Campaign not found');
         }
@@ -82,13 +84,23 @@ try {
 
         // Fetch the base domains and campaign IDs of the backlinks to be deleted
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
-        $stmt = $pdo->prepare("SELECT id, campaign_id, base_domain FROM backlinks WHERE id IN ($placeholders)");
-        $stmt->execute($ids);
+        $stmt = $pdo->prepare("
+            SELECT b.id, b.campaign_id, b.base_domain 
+            FROM backlinks b
+            JOIN campaigns c ON b.campaign_id = c.id
+            WHERE b.id IN ($placeholders) AND c.company_id = ?
+        ");
+        $params = array_merge($ids, [$company_id]);
+        $stmt->execute($params);
         $backlinksToDelete = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // Delete the backlinks
-        $stmt = $pdo->prepare("DELETE FROM backlinks WHERE id IN ($placeholders)");
-        $stmt->execute($ids);
+        $stmt = $pdo->prepare("
+            DELETE b FROM backlinks b
+            JOIN campaigns c ON b.campaign_id = c.id
+            WHERE b.id IN ($placeholders) AND c.company_id = ?
+        ");
+        $stmt->execute($params);
 
         // Update duplicate status for each deleted backlink's base domain
         foreach ($backlinksToDelete as $backlink) {

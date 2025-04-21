@@ -45,4 +45,22 @@ if (preg_match("/login\.php$/", $request_uri)) {
         header("Location:" . BASE_URL . "login.php");
         exit;
     }
+
+    // Check if company is active
+    if (!empty($_SESSION['company_id'])) {
+        require_once __DIR__ . '/db.php';
+        try {
+            $stmt = $pdo->prepare("SELECT status FROM companies WHERE id = ?");
+            $stmt->execute([$_SESSION['company_id']]);
+            $company = $stmt->fetch();
+
+            if (!$company || $company['status'] !== 'active') {
+                session_destroy();
+                header("Location:" . BASE_URL . "login.php?error=Company account is not active");
+                exit;
+            }
+        } catch (PDOException $e) {
+            error_log("Company status check error: " . $e->getMessage());
+        }
+    }
 }

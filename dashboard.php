@@ -1,18 +1,28 @@
 <?php
 require_once __DIR__ . '/middleware.php';
 require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/users/company_helper.php';
 
 try {
+    $company_id = get_current_company_id();
+
     // Total campaigns
-    $totalCampaignsStmt = $pdo->query("SELECT COUNT(*) FROM campaigns");
+    $totalCampaignsStmt = $pdo->prepare("SELECT COUNT(*) FROM campaigns WHERE company_id = ?");
+    $totalCampaignsStmt->execute([$company_id]);
     $totalCampaigns = $totalCampaignsStmt->fetchColumn();
 
     // Total backlinks
-    $totalBacklinksStmt = $pdo->query("SELECT COUNT(*) FROM backlinks");
+    $totalBacklinksStmt = $pdo->prepare("
+        SELECT COUNT(*) FROM backlinks b
+        JOIN campaigns c ON b.campaign_id = c.id
+        WHERE c.company_id = ?
+    ");
+    $totalBacklinksStmt->execute([$company_id]);
     $totalBacklinks = $totalBacklinksStmt->fetchColumn();
 
     // Active/Inactive campaigns
-    $campaignsStmt = $pdo->query("SELECT status, COUNT(*) as count FROM campaigns GROUP BY status");
+    $campaignsStmt = $pdo->prepare("SELECT status, COUNT(*) as count FROM campaigns WHERE company_id = ? GROUP BY status");
+    $campaignsStmt->execute([$company_id]);
     $campaignsStats = [];
     while ($row = $campaignsStmt->fetch(PDO::FETCH_ASSOC)) {
         $campaignsStats[$row['status']] = $row['count'];
@@ -21,7 +31,14 @@ try {
     $inactiveCampaigns = $campaignsStats['disabled'] ?? 0;
 
     // Alive/Dead backlinks
-    $backlinksStmt = $pdo->query("SELECT status, COUNT(*) as count FROM backlinks GROUP BY status");
+    $backlinksStmt = $pdo->prepare("
+        SELECT b.status, COUNT(*) as count 
+        FROM backlinks b
+        JOIN campaigns c ON b.campaign_id = c.id
+        WHERE c.company_id = ?
+        GROUP BY b.status
+    ");
+    $backlinksStmt->execute([$company_id]);
     $backlinksStats = [];
     while ($row = $backlinksStmt->fetch(PDO::FETCH_ASSOC)) {
         $backlinksStats[$row['status']] = $row['count'];
@@ -154,7 +171,7 @@ try {
             <?php if ($totalCampaigns == 0): ?>
                 <div class="welcome-message mt-4">
                     <h2>Welcome to Your Backlink Manager!</h2>
-                    <p>It looks like you haven’t created any campaigns yet. Start by creating your first campaign to manage your backlinks effectively.</p>
+                    <p>It looks like you haven't created any campaigns yet. Start by creating your first campaign to manage your backlinks effectively.</p>
                     <a href="<?= BASE_URL ?>campaigns/campaign_management.php" class="btn btn-primary">Create Your First Campaign</a>
                 </div>
             <?php elseif ($totalBacklinks == 0): ?>

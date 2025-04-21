@@ -4,7 +4,7 @@ session_start();
 // Define constants for file paths
 const CONFIG_FILE = __DIR__ . '/../config/config.php';
 const PROXIES_FILE = __DIR__ . '/../config/proxies.json';
-const SCHEMA_FILE = __DIR__ . '/schema.sql';
+const SCHEMA_FILE = __DIR__ . '/../sql/schema.sql';
 const LOGIN_URL = '../login.php';
 const INDEX_URL = 'index.php';
 const CONFIRM_REINSTALL_URL = 'confirm_reinstall.php';
