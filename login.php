@@ -6,44 +6,9 @@ session_start();
 
 $errors = [];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $validator = new ValidationHelper($_POST);
-
-    $validator
-        ->required('username', 'Username is required')
-        ->required('password', 'Password is required');
-
-    if ($validator->passes()) {
-        try {
-            $stmt = $pdo->prepare("SELECT u.*, c.name as company_name FROM users u LEFT JOIN companies c ON u.company_id = c.id WHERE u.username = ?");
-            $stmt->execute([$_POST['username']]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($user && password_verify($_POST['password'], $user['password'])) {
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['username'] = $user['username'];
-                $_SESSION['role'] = $user['role'];
-                $_SESSION['company_id'] = $user['company_id'];
-                $_SESSION['company_name'] = $user['company_name'];
-                $_SESSION['is_superadmin'] = $user['is_superadmin'];
-
-                // Redirect based on role
-                if ($user['is_superadmin']) {
-                    header('Location: superadmin/dashboard.php');
-                } else {
-                    header('Location: dashboard.php');
-                }
-                exit;
-            } else {
-                $errors[] = 'Invalid username or password';
-            }
-        } catch (PDOException $e) {
-            $errors[] = 'Login failed. Please try again.';
-            error_log($e->getMessage());
-        }
-    } else {
-        $errors = $validator->getErrors();
-    }
+// Check for error messages from process_login.php
+if (isset($_GET['error'])) {
+    $errors[] = htmlspecialchars($_GET['error']);
 }
 ?>
 
@@ -75,10 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                         <?php endif; ?>
 
-                        <form method="POST" action="">
+                        <form method="POST" action="process_login.php">
                             <div class="mb-3">
-                                <label for="username" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" required>
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>

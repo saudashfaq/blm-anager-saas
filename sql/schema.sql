@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS users (
     UNIQUE KEY unique_username_per_company (username, company_id),
     UNIQUE KEY unique_email_per_company (email, company_id),
     INDEX idx_user_role (role, is_superadmin),
-    INDEX idx_user_company (company_id, status)
+    INDEX idx_user_company (company_id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS campaigns (
