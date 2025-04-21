@@ -126,8 +126,9 @@ CREATE TABLE IF NOT EXISTS cron_jobs (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY (job_name),
     INDEX idx_cron_status (status, next_run)
+
 ) ENGINE=InnoDB;
 
 -- Create SuperAdmin user
-INSERT INTO users (username, email, password, role, is_superadmin, created_at) 
-VALUES ('superadmin', 'superadmin@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 1, NOW());
+-- INSERT INTO users (username, email, password, role, is_superadmin, created_at) 
+--VALUES ('superadmin', 'superadmin@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 1, NOW());

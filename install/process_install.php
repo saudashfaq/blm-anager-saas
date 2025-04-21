@@ -145,7 +145,7 @@ function createOrUpdateAdminUser($pdo, $username, $email, $password)
         $stmt->execute([$username, $email]);
         $existingUser = $stmt->fetch();
 
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $hashedPassword = password_hash($password, "md5");
 
         if ($existingUser) {
             // Update the existing admin user
@@ -153,7 +153,7 @@ function createOrUpdateAdminUser($pdo, $username, $email, $password)
             $stmt->execute([$username, $email, $hashedPassword, $existingUser['id']]);
         } else {
             // Create a new admin user
-            $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, 'admin')");
+            $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role, is_superadmin) VALUES (?, ?, ?, 'admin', 1)");
             $stmt->execute([$username, $email, $hashedPassword]);
         }
     } catch (PDOException $e) {
