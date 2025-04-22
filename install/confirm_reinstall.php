@@ -121,9 +121,11 @@ if (empty($_SESSION['reinstall'])) {
                 <input type="hidden" name="skip_install_check" value="1">
                 <?php
                 // Preserve form data
-                if (isset($_SESSION['form_data'])) {
+                if (isset($_SESSION['form_data']) && is_array($_SESSION['form_data'])) {
                     foreach ($_SESSION['form_data'] as $key => $value) {
-                        echo '<input type="hidden" name="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '">';
+                        if (is_string($value)) {
+                            echo '<input type="hidden" name="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '">';
+                        }
                     }
                 }
                 ?>

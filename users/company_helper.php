@@ -51,7 +51,11 @@ function get_current_company_id()
  */
 function is_company_admin()
 {
-    return isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+    return 
+    isset($_SESSION['role']) && 
+    $_SESSION['role'] === 'admin' && 
+    isset($_SESSION['is_superadmin']) && 
+    $_SESSION['is_superadmin'] == 0;
 }
 
 /**

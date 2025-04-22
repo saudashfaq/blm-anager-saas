@@ -63,4 +63,21 @@ if (preg_match("/login\.php$/", $request_uri)) {
             error_log("Company status check error: " . $e->getMessage());
         }
     }
+
+    //If restricted URLs like proxies and not is_superadmin then redirect to client dashboard.
+    $restricted_urls = ['proxymanager'];
+    // Check if current URL contains any restricted paths
+    $is_restricted = false;
+    foreach ($restricted_urls as $restricted_path) {
+        if (strpos($request_uri, $restricted_path) !== false) {
+            $is_restricted = true;
+            break;
+        }
+    }
+
+    // Redirect non-superadmins trying to access restricted URLs
+    if ($is_restricted && empty($_SESSION['is_superadmin'])) {
+        header("Location:" . BASE_URL . "dashboard.php?error=Access denied. Superadmin privileges required.");
+        exit;
+    }
 }

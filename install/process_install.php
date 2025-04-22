@@ -145,7 +145,7 @@ function createOrUpdateAdminUser($pdo, $username, $email, $password)
         $stmt->execute([$username, $email]);
         $existingUser = $stmt->fetch();
 
-        $hashedPassword = password_hash($password, "md5");
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
         if ($existingUser) {
             // Update the existing admin user
@@ -161,10 +161,12 @@ function createOrUpdateAdminUser($pdo, $username, $email, $password)
     }
 }
 
+
 // Main installation logic
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirectWithMessage(INDEX_URL, "Invalid request method.");
 }
+
 
 // Validate and sanitize inputs
 $requiredFields = ['purchase_key', 'db_host', 'db_name', 'db_user', 'db_pass', 'site_url', 'base_url', 'admin_username', 'admin_email', 'admin_password'];
@@ -183,7 +185,7 @@ foreach ($requiredFields as $field) {
 extract($_POST);
 
 // Check if the application is already installed and confirmation is required
-if (isAppInstalled() && empty($_SESSION['skip_install_check'])) {
+if (isAppInstalled() && empty($_POST['skip_install_check'])) {
     $_SESSION['form_data'] = $_POST;
     $_SESSION['reinstall'] = true;
     $_SESSION['warning'] = "The application is already installed. Proceeding will overwrite the existing database. Do you want to continue?";
