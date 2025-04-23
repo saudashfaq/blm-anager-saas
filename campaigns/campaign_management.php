@@ -144,85 +144,142 @@ include_once __DIR__ . '/../includes/header.php';
 
                 <?php foreach ($campaigns as $campaign): ?>
                     <div class="col-md-6 col-lg-4 campaign-card" data-name="<?= htmlspecialchars(strtolower($campaign['name'])) ?>" data-base-url="<?= htmlspecialchars(strtolower($campaign['base_url'])) ?>" data-status="<?= htmlspecialchars($campaign['status']) ?>" data-created-at="<?= htmlspecialchars($campaign['created_at']) ?>">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title"><?= htmlspecialchars($campaign['name']) ?></h3>
-                                <span class="badge ms-auto bg-<?= $campaign['status'] === 'enabled' ? 'green-lt' : 'red-lt' ?>">
+                        <div class="card card-stacked">
+                            <div class="status-badge position-absolute end-0 top-0 mt-2 me-2">
+                                <span class="badge bg-<?= $campaign['status'] === 'enabled' ? 'green-lt' : 'red-lt' ?>">
                                     <?= ucfirst($campaign['status']) ?>
                                 </span>
                             </div>
                             <div class="card-body">
-                                <p>
-                                    <strong>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
-                                            <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
-                                        </svg>
-                                        Base URL:
-                                    </strong>
-                                    <?= htmlspecialchars($campaign['base_url']) ?>
-                                </p>
-                                <p>
-                                    <strong>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <circle cx="12" cy="12" r="9" />
-                                            <path d="M12 7v5l3 3" />
-                                        </svg>
-                                        Verification:
-                                    </strong>
-                                    <span class="verification-frequency"> <?= htmlspecialchars(ucfirst($campaign['verification_frequency'])) ?></span>
-                                </p>
+                                <h3 class="card-title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-building-store me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M3 21l18 0" />
+                                        <path d="M3 7v1a3 3 0 0 0 6 0v-1m4 0v1a3 3 0 0 0 6 0v-1" />
+                                        <path d="M5 21v-12a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v12" />
+                                    </svg>
+                                    <?= htmlspecialchars($campaign['name']) ?>
+                                </h3>
 
-                                <div class="mt-3">
-                                    <div class="row g-2 align-items-center">
-                                        <div class="col">
-                                            <div class="text-muted">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chart-bar me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <path d="M3 12h4v8h-4z" />
-                                                    <path d="M10 8h4v12h-4z" />
-                                                    <path d="M17 4h4v16h-4z" />
-                                                    <path d="M3 20h18" />
-                                                </svg>
-                                                Backlinks: <strong><?= (int)$campaign['total_backlinks'] ?></strong>
+                                <div class="mt-3 mb-3">
+                                    <div class="datagrid">
+                                        <div class="datagrid-item">
+                                            <div class="datagrid-title">Base URL</div>
+                                            <div class="datagrid-content">
+                                                <a href="<?= htmlspecialchars($campaign['base_url']) ?>" target="_blank" class="text-reset d-inline-flex">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                        <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+                                                        <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+                                                    </svg>
+                                                    <?= htmlspecialchars($campaign['base_url']) ?>
+                                                </a>
                                             </div>
                                         </div>
-                                        <div class="col-auto" data-bs-toggle="tooltip" data-bs-placement="top" title="View Backlinks">
-                                            <a href="backlink_management.php?campaign_id=<?= $campaign['id'] ?>" class="btn btn-sm btn-outline-primary">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-external-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <div class="datagrid-item">
+                                            <div class="datagrid-title">Verification</div>
+                                            <div class="datagrid-content">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6" />
-                                                    <path d="M11 13l9 -9" />
-                                                    <path d="M15 4h5v5" />
+                                                    <circle cx="12" cy="12" r="9" />
+                                                    <path d="M12 7v5l3 3" />
                                                 </svg>
-                                                View
-                                            </a>
+                                                <span class="verification-frequency"><?= htmlspecialchars(ucfirst($campaign['verification_frequency'])) ?></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="d-flex mt-4 justify-content-between">
-                                    <a href="export_campaign_report.php?id=<?= $campaign['id'] ?>" class="btn btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Export report">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-export" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M14 3v4a1 1 0 0 0 1 1h4" />
-                                            <path d="M11.5 21h-4.5a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v5m-5 6h7m-3 -3l3 3l-3 3" />
-                                        </svg>
-                                        Export
-                                    </a>
+                                <!-- Backlinks Stats -->
+                                <div class="card card-sm mb-3">
+                                    <div class="card-body">
+                                        <div class="row align-items-center">
+                                            <div class="col-auto">
+                                                <span class="bg-primary text-white avatar">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path>
+                                                        <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                            <div class="col">
+                                                <div class="font-weight-medium">Backlinks</div>
+                                                <div class="text-muted">
+                                                    <div class="d-flex align-items-center">
+                                                        <span class="badge bg-green-lt me-2"><?= (int)$campaign['alive_backlinks'] ?> Alive</span>
+                                                        <span class="badge bg-red-lt me-2"><?= (int)$campaign['dead_backlinks'] ?> Dead</span>
+                                                        <span class="badge bg-yellow-lt"><?= (int)$campaign['pending_backlinks'] ?> Pending</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <div class="h1 mb-0"><?= (int)$campaign['total_backlinks'] ?></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                    <div>
-                                        <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#edit-campaign-modal" data-edit-campaign data-campaign-id="<?= $campaign['id'] ?>">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
-                                                <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
-                                                <path d="M16 5l3 3" />
+                                <div class="d-flex justify-content-between align-items-center mt-4">
+                                    <div class="btn-list">
+                                        <a href="backlink_management.php?campaign_id=<?= $campaign['id'] ?>" class="btn btn-primary">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                                                <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"></path>
                                             </svg>
-                                            Edit
+                                            View
+                                        </a>
+                                        <a href="bulk_upload_backlinks.php?campaign_id=<?= $campaign['id'] ?>" class="btn">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-upload" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
+                                                <path d="M7 9l5 -5l5 5"></path>
+                                                <path d="M12 4l0 12"></path>
+                                            </svg>
+                                            Upload
+                                        </a>
+                                    </div>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-settings" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"></path>
+                                                <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
+                                            </svg>
+                                            Actions
                                         </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit-campaign-modal" data-edit-campaign data-campaign-id="<?= $campaign['id'] ?>">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
+                                                    <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
+                                                    <path d="M16 5l3 3" />
+                                                </svg>
+                                                Edit Campaign
+                                            </a>
+                                            <a class="dropdown-item" href="export_campaign_report.php?campaign_id=<?= $campaign['id'] ?>">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-export me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                                                    <path d="M11.5 21h-4.5a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v5m-5 6h7m-3 -3l3 3l-3 3" />
+                                                </svg>
+                                                Export Report
+                                            </a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#delete-campaign-modal" data-delete-campaign data-campaign-id="<?= $campaign['id'] ?>" data-campaign-name="<?= htmlspecialchars($campaign['name']) ?>">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                    <path d="M4 7l16 0"></path>
+                                                    <path d="M10 11l0 6"></path>
+                                                    <path d="M14 11l0 6"></path>
+                                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                                </svg>
+                                                Delete
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -244,13 +301,13 @@ include_once __DIR__ . '/../includes/header.php';
             </div>
             <div class="modal-body">
                 <form id="campaign-form" method="POST">
-                    <input type="hidden" name="action" value="create">
+                    <input type="hidden" name="action" value="create_campaign">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
                     <div class="mb-3">
-                        <label for="name" class="form-label required">Name</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
-                        <span id="name-error" class="error-message text-danger"></span>
+                        <label for="campaign_name" class="form-label required">Name</label>
+                        <input type="text" class="form-control" id="campaign_name" name="campaign_name" required>
+                        <span id="campaign_name-error" class="error-message text-danger"></span>
                     </div>
 
                     <div class="mb-3">
@@ -301,19 +358,18 @@ include_once __DIR__ . '/../includes/header.php';
                 <form id="campaign-edit-form" method="POST">
                     <input type="hidden" name="action" value="update">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                    <input type="hidden" name="id" id="edit-campaign-id">
+                    <input type="hidden" name="campaign_id" id="edit-campaign-id">
 
                     <div class="mb-3">
                         <label for="edit-name" class="form-label required">Name</label>
-                        <input type="text" class="form-control" id="edit-name" name="name" required>
-                        <span id="edit-name-error" class="error-message text-danger"></span>
+                        <input type="text" class="form-control" id="edit-name" name="campaign_name" required>
+                        <span id="edit-campaign_name-error" class="error-message text-danger"></span>
                     </div>
 
                     <div class="mb-3">
-                        <label for="edit-base-url" class="form-label required">Base URL</label>
-                        <input type="url" class="form-control" id="edit-base-url" name="base_url" placeholder="https://example.com" required>
-                        <span id="edit-base_url-error" class="error-message text-danger"></span>
-                        <div class="form-text">The main domain you're building backlinks for</div>
+                        <label for="edit-base-url" class="form-label">Base URL</label>
+                        <input type="url" class="form-control" id="edit-base-url" disabled>
+                        <div class="form-text">Base URL cannot be changed after campaign creation</div>
                     </div>
 
                     <div class="mb-3">
@@ -345,7 +401,52 @@ include_once __DIR__ . '/../includes/header.php';
     </div>
 </div>
 
+<!-- Delete Campaign Modal -->
+<div class="modal modal-blur fade" id="delete-campaign-modal" tabindex="-1">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="modal-title text-center">Are you sure?</div>
+                <div class="text-center mt-2">
+                    <p>You're about to delete campaign: <strong id="delete-campaign-name"></strong></p>
+                    <p class="text-muted">This action cannot be undone. All backlinks associated with this campaign will also be deleted.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="w-100">
+                    <div class="row">
+                        <div class="col">
+                            <button type="button" class="btn w-100" data-bs-dismiss="modal">
+                                Cancel
+                            </button>
+                        </div>
+                        <div class="col">
+                            <form id="delete-campaign-form" method="POST">
+                                <input type="hidden" name="action" value="delete_campaign">
+                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                <input type="hidden" name="campaign_id" id="delete-campaign-id">
+                                <button type="submit" class="btn btn-danger w-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M4 7l16 0"></path>
+                                        <path d="M10 11l0 6"></path>
+                                        <path d="M14 11l0 6"></path>
+                                        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                    </svg>
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts for campaign management will be included via the footer.php and page-specific script -->
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>
+
 <!-- Include campaign management specific JavaScript -->
 <script src="<?= defined('BASE_URL') ? BASE_URL : '/' ?>includes/js/campaign-management.js"></script>
-
-<?php include_once __DIR__ . '/../includes/footer.php'; ?>

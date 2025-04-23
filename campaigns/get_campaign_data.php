@@ -171,6 +171,8 @@ function handleRequest($pdo)
 {
     // Get campaign ID
     $campaignId = getCampaignId();
+    //print_r($campaignId);
+    //die();
     if (!$campaignId) {
         http_response_code(400);
         echo json_encode(['error' => 'Campaign ID required']);
@@ -184,6 +186,8 @@ function handleRequest($pdo)
         echo json_encode(['error' => 'Campaign not found']);
         exit('Campaign not found');
     }
+    //print_r($campaign);
+    //die();
 
     // Get filter parameters
     $filterType = isset($_POST['filter_type']) ? $_POST['filter_type'] : null;
@@ -213,6 +217,8 @@ function handleRequest($pdo)
         'pagination' => $page !== null ? $pagination->render() : '' // Include pagination HTML only when paginating
     ];
 
+    print_r($response);
+    die();
     // For debugging
     //error_log('Campaign Data: ' . print_r($response, true));
 

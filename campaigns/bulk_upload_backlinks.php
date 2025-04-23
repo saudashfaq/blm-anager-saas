@@ -278,6 +278,7 @@ https://third.com,,"></textarea>
                 </div>
             </div>
         </div>
+        <?php include_once __DIR__ . '/../includes/footer.php'; ?>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
 </body>

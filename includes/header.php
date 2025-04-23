@@ -17,11 +17,8 @@ $pageTitle = $pageTitle ?? 'Backlink Manager';
     <title><?= $pageTitle ?> - Backlink Manager</title>
 
     <!-- Common CSS -->
-    <?php if (strpos($pageTitle, 'Dashboard') !== false || strpos($pageTitle, 'Proxy Manager') !== false): ?>
-        <link href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet">
-    <?php else: ?>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <?php endif; ?>
+    <!-- Always load Tabler CSS for consistent theming across the application -->
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet">
 
     <!-- Additional CSS specific to the page can be included after this file -->
 </head>

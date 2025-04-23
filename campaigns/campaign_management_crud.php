@@ -29,6 +29,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
         */
 
+    // Handle get single campaign request
+    if (isset($_POST['action']) && $_POST['action'] === 'get') {
+        try {
+            $campaign_id = intval($_POST['campaign_id']);
+            $company_id = get_current_company_id();
+
+            // Check ownership if not admin
+            if ($_SESSION['role'] !== 'admin') {
+                $ownership = checkCampaignOwnership($campaign_id, $_SESSION['user_id'], $company_id);
+                if (!$ownership) {
+                    echo json_encode([
+                        'success' => false,
+                        'message' => 'You do not have permission to access this campaign'
+                    ]);
+                    exit;
+                }
+            }
+
+            // Fetch campaign data
+            $stmt = $pdo->prepare("SELECT * FROM campaigns WHERE id = ? AND company_id = ?");
+            $stmt->execute([$campaign_id, $company_id]);
+            $campaign = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($campaign) {
+                echo json_encode([
+                    'success' => true,
+                    'campaign' => $campaign
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Campaign not found'
+                ]);
+            }
+            exit;
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error fetching campaign: ' . $e->getMessage()
+            ]);
+            exit;
+        }
+    }
+
     //Handle create new campaign request
     if (isset($_POST['action']) && $_POST['action'] === 'create_campaign') {
         try {
@@ -99,9 +144,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Handle update campaign functionality
-    if (isset($_POST['action']) && $_POST['action'] === 'update_campaign') {
+    if (isset($_POST['action']) && $_POST['action'] === 'update') {
         try {
-
             $validator = new ValidationHelper($_POST);
             $validator
                 ->required('campaign_name', 'Campaign name is required')
@@ -124,6 +168,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $verification_frequency = trim($_POST['verification_frequency']);
             $company_id = get_current_company_id();
 
+            // Debug output
+            /*
+            echo json_encode([
+                'debug' => true,
+                'post_data' => $_POST,
+                'campaign_id' => $campaign_id,
+                'campaign_name' => $campaign_name
+            ]);
+            exit;
+            */
+
             // Check if campaign exists and user has permission
             if ($_SESSION['role'] === 'admin' || checkCampaignOwnership($campaign_id, $_SESSION['user_id'], $company_id)) {
                 // Validate inputs
@@ -138,13 +193,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 require_once __DIR__ . '/../config/constants.php';
 
-                $status = $campaign_statuses['disabled']['value'];
+                $status = $campaign_statuses['enabled']['value'];
 
                 if (isset($_POST['status'])) {
-
                     $status = in_array($_POST['status'], array_keys($campaign_statuses)) ? $_POST['status'] : $status;
                 }
 
+                // Update query without base_url
                 $stmt = $pdo->prepare("UPDATE campaigns SET `name` = ?, verification_frequency = ?, `status` = ?, updated_at = NOW() WHERE id = ? AND company_id = ?");
                 $stmt->execute([$campaign_name, $verification_frequency, $status, $campaign_id, $company_id]);
 
@@ -168,7 +223,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 exit;
             } else {
-                http_response_code(200);
+                http_response_code(403);
                 echo json_encode([
                     'success' => false,
                     'message' => 'You are not authorized to access this action.'

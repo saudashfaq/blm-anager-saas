@@ -5,11 +5,8 @@
 </div> <!-- End of .page or .container -->
 
 <!-- Common JavaScript -->
-<?php if (strpos($pageTitle, 'Dashboard') !== false || strpos($pageTitle, 'Proxy Manager') !== false): ?>
-    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
-<?php else: ?>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<?php endif; ?>
+<!-- Always load Tabler.js for consistent theming across the application -->
+<script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
 
 <!-- Include jQuery only if required -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
