@@ -34,13 +34,31 @@ if (!defined('BASE_URL')) {
 
 $request_uri = filter_var(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH), FILTER_SANITIZE_URL);
 
+// List of public pages that don't require authentication
+$public_pages = [
+    'login.php',
+    'index.php',
+    'register.php',
+    'privacy-policy.php',
+    'terms-of-service.php'
+];
+
+// Check if current page is in public pages list
+$is_public_page = false;
+foreach ($public_pages as $page) {
+    if (preg_match("/{$page}$/", $request_uri)) {
+        $is_public_page = true;
+        break;
+    }
+}
+
 if (preg_match("/login\.php$/", $request_uri)) {
     if (!empty($_SESSION['user_id'])) {
         header("Location:" . BASE_URL . "dashboard.php");
         exit;
     }
-} else {
-    //some other URL
+} elseif (!$is_public_page) {
+    //some other URL that requires authentication
     if (empty($_SESSION['user_id'])) {
         header("Location:" . BASE_URL . "login.php");
         exit;
