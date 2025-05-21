@@ -141,11 +141,6 @@ $proxies = json_decode(file_get_contents(__DIR__ . '/config/proxies.json'), true
 include_once __DIR__ . '/includes/header.php';
 ?>
 
-// Include header
-include_once __DIR__ . '/includes/header.php';
-?>
-
-
 <div class="page">
     <?php include_once __DIR__ . '/includes/navbar.php'; ?>
     <div class="container mt-4">

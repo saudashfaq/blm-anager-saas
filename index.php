@@ -11,6 +11,24 @@ if (!defined('BASE_URL')) {
 
 
 if (isset($_SESSION['user_id'])) {
+    // Check if user is a superadmin
+    if (isset($_SESSION['is_superadmin']) && $_SESSION['is_superadmin'] === 1) {
+        header("Location:" . BASE_URL . "super-admin/subscribers.php");
+        exit;
+    }
+
+    // For regular users, check subscription status
+    if (
+        isset($_SESSION['subscription']) &&
+        isset($_SESSION['subscription']['plan_name']) &&
+        $_SESSION['subscription']['plan_name'] === PLAN_FREE
+    ) {
+        // Free plan users are redirected to subscription page
+        header("Location:" . BASE_URL . "subscriptions/subscribe.php");
+        exit;
+    }
+
+    // All other users go to dashboard
     header("Location:" . BASE_URL . "dashboard.php");
     exit;
 }

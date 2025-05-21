@@ -3,6 +3,7 @@ require_once __DIR__ . '/../middleware.php';
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../generalfunctions/general_functions.php';
 require_once __DIR__ . '/../users/company_helper.php';
+require_once __DIR__ . '/../subscriptions/classes/SubscriptionLimitChecker.php';
 
 header('Content-Type: application/json');
 header('X-CSRF-TOKEN: ' . $_SESSION['csrf_token']);
@@ -22,6 +23,13 @@ try {
             throw new Exception('Invalid CSRF token');
         }
 
+        // Check subscription limits first
+        if (!isset($_SESSION['subscription'])) {
+            throw new Exception('No active subscription found. Please subscribe to a plan to create backlinks.');
+        }
+
+        $limitChecker = new SubscriptionLimitChecker($pdo, $company_id, $_SESSION['subscription']);
+
         $requiredFields = ['campaign_id', 'backlink_url'];
         foreach ($requiredFields as $field) {
             if (empty($data[$field])) {
@@ -30,6 +38,14 @@ try {
         }
 
         $campaignId = (int)$data['campaign_id'];
+
+        // Check if user can create a new backlink based on subscription limits
+        try {
+            $limitChecker->canCreateBacklink($campaignId);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+
         $backlinkUrl = trim($data['backlink_url']);
         $targetUrl = trim($data['target_url'] ?? '');
         $anchorText = trim($data['anchor_text'] ?? '');

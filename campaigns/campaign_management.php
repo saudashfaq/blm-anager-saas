@@ -320,8 +320,8 @@ include_once __DIR__ . '/../includes/header.php';
                     <div class="mb-3">
                         <label for="verification-frequency" class="form-label required">Verification Frequency</label>
                         <select class="form-select" id="verification-frequency" name="verification_frequency" required>
-                            <option value="daily">Daily</option>
                             <option value="weekly" selected>Weekly</option>
+                            <option value="every_two_weeks">Every Two Weeks</option>
                             <option value="monthly">Monthly</option>
                         </select>
                         <span id="verification_frequency-error" class="error-message text-danger"></span>
@@ -375,8 +375,8 @@ include_once __DIR__ . '/../includes/header.php';
                     <div class="mb-3">
                         <label for="edit-verification-frequency" class="form-label required">Verification Frequency</label>
                         <select class="form-select" id="edit-verification-frequency" name="verification_frequency" required>
-                            <option value="daily">Daily</option>
                             <option value="weekly">Weekly</option>
+                            <option value="every_two_weeks">Every Two Weeks</option>
                             <option value="monthly">Monthly</option>
                         </select>
                         <span id="edit-verification_frequency-error" class="error-message text-danger"></span>

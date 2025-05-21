@@ -1,3 +1,6 @@
+<?php
+require_once __DIR__ . '/../config/subscription_plans.php';
+?>
 <nav class="navbar navbar-expand navbar-light">
     <div class="container-fluid">
         <!-- Navbar Brand -->
@@ -18,37 +21,31 @@
         <!-- Navbar Menu -->
         <div class="collapse navbar-collapse" id="navbarNav">
             <div class="navbar-nav ms-auto align-items-center">
-                <!-- Navigation Links with Active Check -->
-                <a class="nav-item nav-link <?= (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : '' ?>" href="<?= BASE_URL ?>dashboard.php">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-dashboard me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <circle cx="12" cy="13" r="2" />
-                        <path d="M13.45 11.55l2.05 -2.05" />
-                        <path d="M6.4 20a9 9 0 1 1 11.2 0z" />
-                    </svg>
-                    Dashboard
-                </a>
-                <a class="nav-item nav-link <?= (basename($_SERVER['PHP_SELF']) == 'campaign_management.php' || basename($_SERVER['PHP_SELF']) == 'backlink_management.php' || basename($_SERVER['PHP_SELF']) == 'bulk_upload_backlinks.php') ? 'active' : '' ?>" href="<?= BASE_URL ?>campaigns/campaign_management.php">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-campaign me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M3 3h18v18h-18z" />
-                        <path d="M9 9h6v6h-6z" />
-                    </svg>
-                    Campaign Management
-                </a>
-                <?php if ($_SESSION['role'] === 'admin'): ?>
-                    <a class="nav-item nav-link <?= ((basename($_SERVER['PHP_SELF']) == 'index.php' || basename($_SERVER['PHP_SELF']) == 'form.php') && strpos($_SERVER['REQUEST_URI'], 'users') !== false) ? 'active' : '' ?>" href="<?= BASE_URL ?>users/index.php">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <?php
+                // Check if user is on free plan - with proper fallback
+                $isFreePlan = false;
+                if (
+                    isset($_SESSION['subscription']) &&
+                    isset($_SESSION['subscription']['plan_name']) &&
+                    $_SESSION['subscription']['plan_name'] === PLAN_FREE
+                ) {
+                    $isFreePlan = true;
+                }
+
+                $isSuperAdmin = isset($_SESSION['is_superadmin']) && $_SESSION['is_superadmin'] === 1;
+
+                if ($isSuperAdmin) {
+                    // Show only superadmin links
+                ?>
+                    <a class="nav-item nav-link <?= (basename($_SERVER['PHP_SELF']) == 'subscribers.php') ? 'active' : '' ?>" href="<?= BASE_URL ?>super-admin/subscribers.php">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users-plus me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <circle cx="9" cy="7" r="4" />
+                            <path d="M5 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
                             <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                            <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
+                            <path d="M16 11h6m-3 -3v6" />
                         </svg>
-                        User Management
+                        Subscribers
                     </a>
-                <?php endif; ?>
-                <?php if ($_SESSION['is_superadmin'] === 1): ?>
                     <a class="nav-item nav-link <?= (basename($_SERVER['PHP_SELF']) == 'proxymanager.php') ? 'active' : '' ?>" href="<?= BASE_URL ?>proxymanager.php">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shield me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -56,7 +53,83 @@
                         </svg>
                         Proxy Management
                     </a>
-                <?php endif; ?>
+                    <a class="nav-item nav-link <?= (basename($_SERVER['PHP_SELF']) == 'assign_plan.php') ? 'active' : '' ?>" href="<?= BASE_URL ?>super-admin/assign_plan.php">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-adjustments me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <circle cx="6" cy="10" r="2" />
+                            <line x1="6" y1="4" x2="6" y2="8" />
+                            <line x1="6" y1="12" x2="6" y2="20" />
+                            <circle cx="12" cy="16" r="2" />
+                            <line x1="12" y1="4" x2="12" y2="14" />
+                            <line x1="12" y1="18" x2="12" y2="20" />
+                            <circle cx="18" cy="7" r="2" />
+                            <line x1="18" y1="4" x2="18" y2="5" />
+                            <line x1="18" y1="9" x2="18" y2="20" />
+                        </svg>
+                        Assign Plan
+                    </a>
+                    <?php
+                } else {
+                    // Show subscription link first for free plan users
+                    if ($isFreePlan): ?>
+                        <a class="nav-item nav-link <?= (basename($_SERVER['PHP_SELF']) == 'subscribe.php') ? 'active' : '' ?>" href="<?= BASE_URL ?>subscriptions/subscribe.php">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-credit-card me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M3 5m0 3a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3z"></path>
+                                <path d="M3 10l18 0"></path>
+                                <path d="M7 15l.01 0"></path>
+                                <path d="M11 15l2 0"></path>
+                            </svg>
+                            Subscription Plans
+                        </a>
+                    <?php endif; ?>
+
+                    <!-- Navigation Links with Active Check -->
+                    <a class="nav-item nav-link <?= (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : '' ?>" href="<?= BASE_URL ?>dashboard.php">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-dashboard me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <circle cx="12" cy="13" r="2" />
+                            <path d="M13.45 11.55l2.05 -2.05" />
+                            <path d="M6.4 20a9 9 0 1 1 11.2 0z" />
+                        </svg>
+                        Dashboard
+                    </a>
+                    <a class="nav-item nav-link <?= (basename($_SERVER['PHP_SELF']) == 'campaign_management.php' || basename($_SERVER['PHP_SELF']) == 'backlink_management.php' || basename($_SERVER['PHP_SELF']) == 'bulk_upload_backlinks.php') ? 'active' : '' ?>" href="<?= BASE_URL ?>campaigns/campaign_management.php">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-campaign me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M3 3h18v18h-18z" />
+                            <path d="M9 9h6v6h-6z" />
+                        </svg>
+                        Campaign Management
+                    </a>
+
+                    <?php if ($_SESSION['role'] === 'admin'): ?>
+                        <a class="nav-item nav-link <?= ((basename($_SERVER['PHP_SELF']) == 'index.php' || basename($_SERVER['PHP_SELF']) == 'form.php') && strpos($_SERVER['REQUEST_URI'], 'users') !== false) ? 'active' : '' ?>" href="<?= BASE_URL ?>users/index.php">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
+                            </svg>
+                            User Management
+                        </a>
+                    <?php endif; ?>
+
+                    <?php if (!$isFreePlan): ?>
+                        <a class="nav-item nav-link <?= (basename($_SERVER['PHP_SELF']) == 'subscribe.php') ? 'active' : '' ?>" href="<?= BASE_URL ?>subscriptions/subscribe.php">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-credit-card me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M3 5m0 3a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3z"></path>
+                                <path d="M3 10l18 0"></path>
+                                <path d="M7 15l.01 0"></path>
+                                <path d="M11 15l2 0"></path>
+                            </svg>
+                            Subscription Plans
+                        </a>
+                    <?php endif; ?>
+                <?php } ?>
+
                 <a class="nav-item nav-link <?= (basename($_SERVER['PHP_SELF']) == 'logout.php') ? 'active' : '' ?>" href="<?= BASE_URL ?>logout.php">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-logout me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />

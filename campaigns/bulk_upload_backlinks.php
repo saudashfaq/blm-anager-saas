@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../middleware.php';
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../generalfunctions/general_functions.php';
+require_once __DIR__ . '/../subscriptions/classes/SubscriptionLimitChecker.php';
 
 if (empty($_GET['campaign_id']) || !is_numeric($_GET['campaign_id'])) {
     header('HTTP/1.1 403 Forbidden');
@@ -9,6 +10,17 @@ if (empty($_GET['campaign_id']) || !is_numeric($_GET['campaign_id'])) {
 }
 
 $campaignId = (int)$_GET['campaign_id'];
+$company_id = get_current_company_id();
+
+// Check subscription
+if (!isset($_SESSION['subscription'])) {
+    $_SESSION['error'] = 'No active subscription found. Please subscribe to a plan to upload backlinks.';
+    header('Location: campaign_management.php');
+    exit;
+}
+
+// Initialize SubscriptionLimitChecker
+$limitChecker = new SubscriptionLimitChecker($pdo, $company_id, $_SESSION['subscription']);
 
 // Check if the campaign exists and fetch its base_url
 $stmt = $pdo->prepare("SELECT id, name, base_url FROM campaigns WHERE id = ?");

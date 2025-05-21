@@ -5,6 +5,7 @@ require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../config/validationHelper.php';
 require_once __DIR__ . '/../config/constants.php';
 require_once __DIR__ . '/../users/company_helper.php';
+require_once __DIR__ . '/../subscriptions/classes/SubscriptionLimitChecker.php';
 
 // Check if user is logged in and has access
 if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'user') {
@@ -77,6 +78,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Handle create new campaign request
     if (isset($_POST['action']) && $_POST['action'] === 'create_campaign') {
         try {
+            // Check subscription limits first
+            if (!isset($_SESSION['subscription'])) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'No active subscription found. Please subscribe to a plan to create campaigns.'
+                ]);
+                exit;
+            }
+
+            $limitChecker = new SubscriptionLimitChecker($pdo, $company_id, $_SESSION['subscription']);
+
+            try {
+                $limitChecker->canCreateCampaign();
+            } catch (Exception $e) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ]);
+                exit;
+            }
+
             $validator = new ValidationHelper($_POST);
             $validator
                 ->required('campaign_name', 'Campaign name is required')

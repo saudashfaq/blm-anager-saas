@@ -1,9 +1,6 @@
 <?php
 
-//TODO: remove daily settings from DB
-//TODO: Keep weekly settings to DB
-//TODO: Keep every two weeks settings to DB
-//TODO: Keep monthly settings to DB
+
 //TODO: To verify 200 backlinks once, it cost $1 keep this in mind to make packages
 //TODO: To create plans we have to have a table in DB to store plans and their details
 //TODO: These plans should display on frontend dynamically

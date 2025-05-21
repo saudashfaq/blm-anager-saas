@@ -7,13 +7,14 @@ CREATE TABLE IF NOT EXISTS companies (
     address TEXT DEFAULT NULL,
     status ENUM('active', 'inactive', 'suspended') NOT NULL DEFAULT 'active',
     subscription_plan ENUM('free', 'basic', 'premium', 'enterprise') NOT NULL DEFAULT 'free',
-    subscription_expires_at DATETIME NULL,
+    subscription_plan_id VARCHAR(255) DEFAULT NULL COMMENT 'Stripe Price ID of the subscribed plan',
+    stripe_subscription_id VARCHAR(255) DEFAULT NULL COMMENT 'Stripe Subscription ID',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NULL,
     UNIQUE KEY unique_company_email (email),
     INDEX idx_company_status (status),
     INDEX idx_subscription (subscription_plan, subscription_expires_at)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -23,13 +24,15 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     role ENUM('admin', 'user') NOT NULL DEFAULT 'user',
     is_superadmin TINYINT(1) NOT NULL DEFAULT 0,
+    status ENUM('active', 'inactive', 'suspended') NOT NULL DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE SET NULL,
     UNIQUE KEY unique_username_per_company (username, company_id),
     UNIQUE KEY unique_email_per_company (email, company_id),
     INDEX idx_user_role (role, is_superadmin),
-    INDEX idx_user_company (company_id)
-) ENGINE=InnoDB;
+    INDEX idx_user_company (company_id),
+    INDEX idx_user_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS campaigns (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -37,7 +40,7 @@ CREATE TABLE IF NOT EXISTS campaigns (
     user_id INT NOT NULL,
     name VARCHAR(255) NOT NULL,
     base_url VARCHAR(255) NOT NULL,
-    verification_frequency ENUM('daily', 'weekly', 'every_two_weeks', 'monthly') NOT NULL DEFAULT 'weekly',
+    verification_frequency ENUM('weekly', 'every_two_weeks', 'monthly') NOT NULL DEFAULT 'weekly',
     last_checked DATETIME DEFAULT NULL,
     status ENUM('enabled', 'disabled') NOT NULL DEFAULT 'enabled',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -47,7 +50,7 @@ CREATE TABLE IF NOT EXISTS campaigns (
     INDEX idx_campaign_status (status, last_checked),
     INDEX idx_campaign_company (company_id, status),
     INDEX idx_campaign_user (user_id, status)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS backlinks (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -68,7 +71,7 @@ CREATE TABLE IF NOT EXISTS backlinks (
     INDEX idx_backlink_campaign (campaign_id, status),
     INDEX idx_backlink_domain (base_domain, status),
     INDEX idx_backlink_created (created_by, created_at)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS verification_logs (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -80,7 +83,7 @@ CREATE TABLE IF NOT EXISTS verification_logs (
     FOREIGN KEY (backlink_id) REFERENCES backlinks(id) ON DELETE CASCADE,
     INDEX idx_verification_backlink (backlink_id, checked_at),
     INDEX idx_verification_status (status, checked_at)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE verification_errors (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -93,7 +96,7 @@ CREATE TABLE verification_errors (
     FOREIGN KEY (backlink_id) REFERENCES backlinks(id) ON DELETE CASCADE,
     INDEX idx_error_backlink (backlink_id, created_at),
     INDEX idx_error_type (error_type, created_at)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS backlink_verification_helper (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -103,7 +106,7 @@ CREATE TABLE IF NOT EXISTS backlink_verification_helper (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE,
     INDEX idx_verification_helper_campaign (campaign_id, last_run)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS settings (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -114,7 +117,7 @@ CREATE TABLE IF NOT EXISTS settings (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE,
     UNIQUE KEY unique_company_settings (company_id)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS cron_jobs (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -127,5 +130,38 @@ CREATE TABLE IF NOT EXISTS cron_jobs (
     UNIQUE KEY (job_name),
     INDEX idx_cron_status (status, next_run)
 
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+CREATE TABLE IF NOT EXISTS subscription_webhooks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    session_id VARCHAR(255) NOT NULL,
+    event_type VARCHAR(50) NOT NULL,
+    verified TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_session_event (session_id, event_type)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS company_subscriptions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    company_id INT NOT NULL UNIQUE,
+    plan_id VARCHAR(255) NOT NULL COMMENT 'Stripe Price ID',
+    plan_name VARCHAR(50) NOT NULL COMMENT 'Plan name from our constants (free, basic, premium, enterprise)',
+    status ENUM('active', 'inactive', 'cancelled', 'past_due', 'incomplete', 'incomplete_expired') NOT NULL DEFAULT 'inactive',
+    stripe_subscription_id VARCHAR(255) NULL,
+    stripe_customer_id VARCHAR(255) NULL,
+    current_period_start TIMESTAMP NULL,
+    current_period_end TIMESTAMP NULL,
+    next_billing_date TIMESTAMP NULL,
+    session_id VARCHAR(255) NOT NULL,
+    cancelled_at TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    verified_at DATETIME NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE,
+    INDEX idx_subscription_company (company_id, status),
+    INDEX idx_subscription_plan (plan_name, status),
+    INDEX idx_subscription_dates (current_period_end, status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

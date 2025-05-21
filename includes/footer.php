@@ -12,7 +12,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- Include common JavaScript functions -->
-<script src="<?= defined('BASE_URL') ? BASE_URL : '/' ?>includes/general.js"></script>
+<script src="<?= BASE_URL ?>includes/js/general.js"></script>
 
 <!-- Additional scripts specific to the page can be included after this file -->
 </body>
