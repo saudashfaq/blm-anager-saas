@@ -1,15 +1,8 @@
 <?php
-
-session_start();
-
+echo 'on index page<br>';
 require_once __DIR__ . '/config/auth.php';
+//die('on index page');
 require_once __DIR__ . '/config/subscription_plans.php';
-
-// Check if BASE_URL is defined, if not redirect to installation page
-if (!defined('BASE_URL')) {
-    header("Location: install/index.php");
-    exit;
-}
 
 // Handle authenticated users
 if (isset($_SESSION['user_id'])) {
@@ -65,7 +58,7 @@ require_once __DIR__ . '/includes/public_navbar.php';
                     </p>
                     <div class="d-flex flex-column flex-sm-row gap-3" data-aos="fade-up" data-aos-delay="200">
                         <a href="register.php" class="btn btn-lg btn-warning">
-                            Start Free Trial
+                            Start Free Forever
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-right ms-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                 <path d="M5 12l14 0" />
@@ -167,8 +160,8 @@ require_once __DIR__ . '/includes/public_navbar.php';
                                 <path d="M4 15l4 -6l4 2l4 -5l4 4" />
                             </svg>
                         </div>
-                        <h3 class="h5 mb-3">Real-time Monitoring</h3>
-                        <p class="text-muted mb-0">Track your backlinks' status and performance in real-time with automated verification.</p>
+                        <h3 class="h5 mb-3">Smart Link Monitoring</h3>
+                        <p class="text-muted mb-0">Track link health, anchor text distribution, and domain authority with automated verification.</p>
                     </div>
                 </div>
             </div>
@@ -177,23 +170,6 @@ require_once __DIR__ . '/includes/public_navbar.php';
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body p-4">
                         <div class="feature-icon bg-success bg-gradient text-white rounded-3 mb-3 p-3 d-inline-block">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-upload" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
-                                <path d="M7 9l5 -5l5 5" />
-                                <path d="M12 4l0 12" />
-                            </svg>
-                        </div>
-                        <h3 class="h5 mb-3">Bulk Upload</h3>
-                        <p class="text-muted mb-0">Import multiple backlinks at once and manage them efficiently in campaigns.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <div class="feature-icon bg-info bg-gradient text-white rounded-3 mb-3 p-3 d-inline-block">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-report-analytics" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                 <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
@@ -204,7 +180,79 @@ require_once __DIR__ . '/includes/public_navbar.php';
                             </svg>
                         </div>
                         <h3 class="h5 mb-3">Advanced Analytics</h3>
-                        <p class="text-muted mb-0">Get detailed reports and insights about your backlink performance and SEO impact.</p>
+                        <p class="text-muted mb-0">Gain deep insights with custom reports, competitor analysis, and performance metrics.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-info bg-gradient text-white rounded-3 mb-3 p-3 d-inline-block">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-bell-ringing" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
+                                <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
+                                <path d="M21 6.727a11.05 11.05 0 0 0 -2.794 -3.727" />
+                                <path d="M3 6.727a11.05 11.05 0 0 1 2.792 -3.727" />
+                            </svg>
+                        </div>
+                        <h3 class="h5 mb-3">Instant Alerts</h3>
+                        <p class="text-muted mb-0">Get real-time notifications for link changes, broken links, and new backlink opportunities.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-warning bg-gradient text-white rounded-3 mb-3 p-3 d-inline-block">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-import" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                                <path d="M5 13v-8a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2h-5.5m-9.5 -2h7m-3 -3l3 3l-3 3" />
+                            </svg>
+                        </div>
+                        <h3 class="h5 mb-3">Smart Import Tools</h3>
+                        <p class="text-muted mb-0">Seamlessly import backlinks from multiple sources with automatic data enrichment.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-danger bg-gradient text-white rounded-3 mb-3 p-3 d-inline-block">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chart-dots" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M3 3v18h18" />
+                                <path d="M9 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                <path d="M19 7m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                <path d="M14 15m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                <path d="M10.16 10.62l2.34 2.88" />
+                                <path d="M15.088 13.328l2.837 -4.586" />
+                            </svg>
+                        </div>
+                        <h3 class="h5 mb-3">Competitor Analysis</h3>
+                        <p class="text-muted mb-0">Compare your backlink profile with competitors and discover new opportunities.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-purple bg-gradient text-white rounded-3 mb-3 p-3 d-inline-block">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-report" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M8 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+                                <path d="M8 5a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-4a2 2 0 0 1 -2 -2z" />
+                                <path d="M10 12l4 0" />
+                                <path d="M10 16l4 0" />
+                            </svg>
+                        </div>
+                        <h3 class="h5 mb-3">Custom Reports</h3>
+                        <p class="text-muted mb-0">Generate white-label reports with your branding and custom metrics.</p>
                     </div>
                 </div>
             </div>
@@ -294,58 +342,107 @@ require_once __DIR__ . '/includes/public_navbar.php';
 <section id="pricing" class="py-5 bg-light">
     <div class="container py-5">
         <div class="text-center mb-5">
-            <h2 class="display-5 fw-bold mb-3">Choose Your Plan</h2>
-            <p class="lead text-muted">Flexible options for businesses of all sizes</p>
+            <h2 class="display-5 fw-bold mb-3">Start Free Forever</h2>
+            <p class="lead text-muted">Get access to all premium features with no credit card required</p>
         </div>
 
-        <div class="row g-4 justify-content-center">
-            <?php foreach ($displayablePlans as $planName => $plan): ?>
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 border-0 shadow-sm <?= $plan['highlight'] ? 'border border-primary border-2' : '' ?>">
-                        <div class="card-body p-4">
-                            <?php if ($plan['highlight']): ?>
-                                <div class="ribbon bg-primary text-white position-absolute end-0 top-0 px-3 py-1">Popular</div>
-                            <?php endif; ?>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <div class="bg-primary bg-gradient text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 48px; height: 48px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-star" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" />
+                                </svg>
+                            </div>
+                            <h3 class="h4 mb-3">Everything You Need to Succeed</h3>
+                            <p class="text-muted mb-0">Access all premium features to supercharge your backlink management</p>
+                        </div>
 
-                            <h3 class="h4 mb-3"><?= htmlspecialchars($plan['name']) ?></h3>
-                            <p class="text-muted mb-4"><?= htmlspecialchars($plan['description']) ?></p>
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-success-subtle rounded-2 p-2 me-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check text-success" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M5 12l5 5l10 -10" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="h6 mb-1">Powerful Campaign Management</h4>
+                                        <p class="text-muted small mb-0">Organize your SEO strategy like a pro</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-success-subtle rounded-2 p-2 me-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check text-success" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M5 12l5 5l10 -10" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="h6 mb-1">Comprehensive Backlink Tracking</h4>
+                                        <p class="text-muted small mb-0">Monitor your entire link portfolio with ease</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-success-subtle rounded-2 p-2 me-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check text-success" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M5 12l5 5l10 -10" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="h6 mb-1">Real-time Monitoring</h4>
+                                        <p class="text-muted small mb-0">24/7 backlink status tracking</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-success-subtle rounded-2 p-2 me-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check text-success" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M5 12l5 5l10 -10" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="h6 mb-1">Advanced Analytics</h4>
+                                        <p class="text-muted small mb-0">Detailed performance insights</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-success-subtle rounded-2 p-2 me-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check text-success" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M5 12l5 5l10 -10" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="h6 mb-1">Bulk Upload</h4>
+                                        <p class="text-muted small mb-0">Import multiple backlinks at once</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-success-subtle rounded-2 p-2 me-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check text-success" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M5 12l5 5l10 -10" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="h6 mb-1">Priority Support</h4>
+                                        <p class="text-muted small mb-0">Get help when you need it</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                            <ul class="list-unstyled mb-4">
-                                <li class="mb-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check text-success me-2" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M5 12l5 5l10 -10" />
-                                    </svg>
-                                    <?= $plan['max_campaigns'] === -1 ? 'Unlimited' : $plan['max_campaigns'] ?> Campaigns
-                                </li>
-                                <li class="mb-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check text-success me-2" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M5 12l5 5l10 -10" />
-                                    </svg>
-                                    <?= $plan['max_total_backlinks'] === -1 ? 'Unlimited' : $plan['max_total_backlinks'] ?> Total Backlinks
-                                </li>
-                                <?php foreach ($plan['features'] as $feature => $details): ?>
-                                    <li class="mb-2">
-                                        <?php if ($details['available']): ?>
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check text-success me-2" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <path d="M5 12l5 5l10 -10" />
-                                            </svg>
-                                        <?php else: ?>
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x text-danger me-2" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <path d="M18 6l-12 12" />
-                                                <path d="M6 6l12 12" />
-                                            </svg>
-                                        <?php endif; ?>
-                                        <?= htmlspecialchars($details['description']) ?>
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
-
-                            <a href="register.php" class="btn btn-primary d-block">
-                                Get Started
+                        <div class="text-center">
+                            <a href="register.php" class="btn btn-primary btn-lg px-5">
+                                Start Free Forever
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-right ms-2" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path d="M5 12l14 0" />
@@ -353,10 +450,11 @@ require_once __DIR__ . '/includes/public_navbar.php';
                                     <path d="M13 6l6 6" />
                                 </svg>
                             </a>
+                            <p class="text-muted mt-3 mb-0">No credit card required • Cancel anytime</p>
                         </div>
                     </div>
                 </div>
-            <?php endforeach; ?>
+            </div>
         </div>
     </div>
 </section>
@@ -369,7 +467,7 @@ require_once __DIR__ . '/includes/public_navbar.php';
                 <h2 class="display-5 fw-bold mb-4">Ready to Optimize Your Backlink Strategy?</h2>
                 <p class="lead text-muted mb-4">Join thousands of satisfied customers who trust our platform for their SEO success.</p>
                 <a href="register.php" class="btn btn-primary btn-lg">
-                    Start Your Free Trial
+                    Start Free Forever
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-right ms-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                         <path d="M5 12l14 0" />

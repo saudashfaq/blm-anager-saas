@@ -22,17 +22,17 @@ require_once __DIR__ . '/../config/subscription_plans.php';
         <div class="collapse navbar-collapse" id="publicNavbar">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= strpos($_SERVER['PHP_SELF'], 'index.php') !== false ? '#features' : BASE_URL . '#features' ?>">
+                    <a class="nav-link" href="<?= BASE_URL ?>index.php#features">
                         Features
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= strpos($_SERVER['PHP_SELF'], 'index.php') !== false ? '#testimonials' : BASE_URL . '#testimonials' ?>">
+                    <a class="nav-link" href="<?= BASE_URL ?>index.php#testimonials">
                         Testimonials
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= strpos($_SERVER['PHP_SELF'], 'index.php') !== false ? '#pricing' : BASE_URL . '#pricing' ?>">
+                    <a class="nav-link" href="<?= BASE_URL ?>index.php#pricing">
                         Pricing
                     </a>
                 </li>

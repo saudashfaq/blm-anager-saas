@@ -93,6 +93,20 @@ include_once __DIR__ . '/includes/header.php';
                                         Sign In
                                     </span>
                                 </button>
+
+                                <div class="text-center my-3">
+                                    <span class="text-muted">OR</span>
+                                </div>
+
+                                <a href="auth/google/functions/google_callback.php" class="btn btn-outline-secondary btn-lg">
+                                    <span class="d-flex align-items-center justify-content-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-google me-2" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M17.788 5.108a9 9 0 1 0 3.212 6.892h-8" />
+                                        </svg>
+                                        Continue with Google
+                                    </span>
+                                </a>
                             </div>
 
                             <div class="text-center">
@@ -117,6 +131,15 @@ include_once __DIR__ . '/includes/header.php';
                     <small class="text-muted">
                         © <?= date('Y') ?> Backlink Manager. All rights reserved.
                     </small>
+                    <div class="mt-3">
+                        <a href="index.php" class="text-decoration-none text-muted">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M15 6l-6 6l6 6" />
+                            </svg>
+                            Back to Home
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

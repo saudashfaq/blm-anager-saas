@@ -32,6 +32,7 @@ if (!defined('BASE_URL')) {
     }
 }
 
+
 $request_uri = filter_var(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH), FILTER_SANITIZE_URL);
 
 // List of public pages that don't require authentication
@@ -45,10 +46,22 @@ $public_pages = [
 
 // Check if current page is in public pages list
 $is_public_page = false;
-foreach ($public_pages as $page) {
-    if (preg_match("/{$page}$/", $request_uri)) {
-        $is_public_page = true;
-        break;
+
+// First check if it's the root URL (including project directory)
+if (
+    $request_uri === '/' ||
+    $request_uri === rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') ||
+    $request_uri === '/backlinks_manager_saas/' ||
+    $request_uri === rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') . '/'
+) {
+    $is_public_page = true;
+} else {
+    // Then check for specific public pages
+    foreach ($public_pages as $page) {
+        if (preg_match("/{$page}$/", $request_uri)) {
+            $is_public_page = true;
+            break;
+        }
     }
 }
 
