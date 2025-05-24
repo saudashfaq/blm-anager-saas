@@ -12,8 +12,9 @@ if ($_SESSION['role'] !== 'admin') {
 
 $id = $username = $email = $role = "";
 if (isset($_GET['id'])) {
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
-    $stmt->execute([$_GET['id']]);
+    $company_id = $_SESSION['company_id'];
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ? AND company_id = ?");
+    $stmt->execute([$_GET['id'], $company_id]);
     $user = $stmt->fetch();
     if ($user) {
         $id = $user['id'];

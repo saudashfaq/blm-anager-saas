@@ -28,8 +28,9 @@ function getCampaignId()
  */
 function fetchCampaign($pdo, $campaignId)
 {
-    $stmt = $pdo->prepare("SELECT * FROM campaigns WHERE id = ?");
-    $stmt->execute([$campaignId]);
+    $company_id = $_SESSION['company_id'];
+    $stmt = $pdo->prepare("SELECT * FROM campaigns WHERE id = ? AND company_id = ?");
+    $stmt->execute([$campaignId, $company_id]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
@@ -46,14 +47,17 @@ function fetchCampaign($pdo, $campaignId)
  */
 function getTotalBacklinks($pdo, $campaignId, $filterType = null, $filterValue = null)
 {
-    $countQuery = "SELECT COUNT(*) FROM backlinks WHERE campaign_id = :campaign_id";
-    $params = ['campaign_id' => $campaignId];
+    $company_id = $_SESSION['company_id'];
+    $countQuery = "SELECT COUNT(*) FROM backlinks b 
+        JOIN campaigns c ON b.campaign_id = c.id 
+        WHERE b.campaign_id = :campaign_id AND c.company_id = :company_id";
+    $params = ['campaign_id' => $campaignId, 'company_id' => $company_id];
 
     if ($filterType === 'status' && in_array($filterValue, ['alive', 'dead'])) {
-        $countQuery .= " AND status = :status";
+        $countQuery .= " AND b.status = :status";
         $params['status'] = $filterValue;
     } elseif ($filterType === 'duplicate' && $filterValue === 'yes') {
-        $countQuery .= " AND is_duplicate = :is_duplicate";
+        $countQuery .= " AND b.is_duplicate = :is_duplicate";
         $params['is_duplicate'] = 'yes';
     }
 
@@ -76,12 +80,13 @@ function getTotalBacklinks($pdo, $campaignId, $filterType = null, $filterValue =
  */
 function fetchBacklinks($pdo, $campaignId, $page, $itemsPerPage, $pagination, $filterType = null, $filterValue = null)
 {
+    $company_id = $_SESSION['company_id'];
     $backlinksQuery = "SELECT b.*, c.name AS campaign_name, u.username AS created_by_username 
         FROM backlinks b 
         JOIN campaigns c ON b.campaign_id = c.id
         JOIN users u ON b.created_by = u.id
-        WHERE b.campaign_id = :campaign_id";
-    $params = ['campaign_id' => $campaignId];
+        WHERE b.campaign_id = :campaign_id AND c.company_id = :company_id";
+    $params = ['campaign_id' => $campaignId, 'company_id' => $company_id];
 
     if ($filterType === 'status' && in_array($filterValue, ['alive', 'dead'])) {
         $backlinksQuery .= " AND b.status = :status";
@@ -99,6 +104,7 @@ function fetchBacklinks($pdo, $campaignId, $page, $itemsPerPage, $pagination, $f
         $backlinksQuery .= " LIMIT :limit OFFSET :offset";
         $stmt = $pdo->prepare($backlinksQuery);
         $stmt->bindValue(':campaign_id', $campaignId, PDO::PARAM_INT);
+        $stmt->bindValue(':company_id', $company_id, PDO::PARAM_INT);
         if (isset($params['status'])) {
             $stmt->bindValue(':status', $params['status'], PDO::PARAM_STR);
         }
@@ -111,6 +117,7 @@ function fetchBacklinks($pdo, $campaignId, $page, $itemsPerPage, $pagination, $f
         // Fetch all backlinks (no pagination)
         $stmt = $pdo->prepare($backlinksQuery);
         $stmt->bindValue(':campaign_id', $campaignId, PDO::PARAM_INT);
+        $stmt->bindValue(':company_id', $company_id, PDO::PARAM_INT);
         if (isset($params['status'])) {
             $stmt->bindValue(':status', $params['status'], PDO::PARAM_STR);
         }
@@ -132,28 +139,37 @@ function fetchBacklinks($pdo, $campaignId, $page, $itemsPerPage, $pagination, $f
  */
 function calculateStats($pdo, $campaignId)
 {
+    $company_id = $_SESSION['company_id'];
     // Total backlinks
-    $totalQuery = "SELECT COUNT(*) FROM backlinks WHERE campaign_id = :campaign_id";
+    $totalQuery = "SELECT COUNT(*) FROM backlinks b 
+        JOIN campaigns c ON b.campaign_id = c.id 
+        WHERE b.campaign_id = :campaign_id AND c.company_id = :company_id";
     $totalStmt = $pdo->prepare($totalQuery);
-    $totalStmt->execute(['campaign_id' => $campaignId]);
+    $totalStmt->execute(['campaign_id' => $campaignId, 'company_id' => $company_id]);
     $totalBacklinks = (int)$totalStmt->fetchColumn();
 
     // Active backlinks
-    $activeQuery = "SELECT COUNT(*) FROM backlinks WHERE campaign_id = :campaign_id AND status = 'alive'";
+    $activeQuery = "SELECT COUNT(*) FROM backlinks b 
+        JOIN campaigns c ON b.campaign_id = c.id 
+        WHERE b.campaign_id = :campaign_id AND c.company_id = :company_id AND b.status = 'alive'";
     $activeStmt = $pdo->prepare($activeQuery);
-    $activeStmt->execute(['campaign_id' => $campaignId]);
+    $activeStmt->execute(['campaign_id' => $campaignId, 'company_id' => $company_id]);
     $activeBacklinks = (int)$activeStmt->fetchColumn();
 
     // Dead backlinks
-    $deadQuery = "SELECT COUNT(*) FROM backlinks WHERE campaign_id = :campaign_id AND status = 'dead'";
+    $deadQuery = "SELECT COUNT(*) FROM backlinks b 
+        JOIN campaigns c ON b.campaign_id = c.id 
+        WHERE b.campaign_id = :campaign_id AND c.company_id = :company_id AND b.status = 'dead'";
     $deadStmt = $pdo->prepare($deadQuery);
-    $deadStmt->execute(['campaign_id' => $campaignId]);
+    $deadStmt->execute(['campaign_id' => $campaignId, 'company_id' => $company_id]);
     $deadBacklinks = (int)$deadStmt->fetchColumn();
 
     // Duplicate backlinks
-    $duplicateQuery = "SELECT COUNT(*) FROM backlinks WHERE campaign_id = :campaign_id AND is_duplicate = 'yes'";
+    $duplicateQuery = "SELECT COUNT(*) FROM backlinks b 
+        JOIN campaigns c ON b.campaign_id = c.id 
+        WHERE b.campaign_id = :campaign_id AND c.company_id = :company_id AND b.is_duplicate = 'yes'";
     $duplicateStmt = $pdo->prepare($duplicateQuery);
-    $duplicateStmt->execute(['campaign_id' => $campaignId]);
+    $duplicateStmt->execute(['campaign_id' => $campaignId, 'company_id' => $company_id]);
     $duplicateBacklinks = (int)$duplicateStmt->fetchColumn();
 
     return [

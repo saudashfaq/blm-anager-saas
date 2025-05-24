@@ -78,37 +78,40 @@ if (preg_match("/login\.php$/", $request_uri)) {
     }
 
     // Check if company is active
-    if (!empty($_SESSION['company_id'])) {
+    if (!empty($_SESSION['company_id']) && empty($_SESSION['is_superadmin'])) {
         require_once __DIR__ . '/db.php';
         try {
             $stmt = $pdo->prepare("SELECT status FROM companies WHERE id = ?");
             $stmt->execute([$_SESSION['company_id']]);
             $company = $stmt->fetch();
 
-            if (!$company || $company['status'] !== 'active') {
+            if (!$company || !in_array($company['status'], ['active'])) {
+                // Log the event
+                error_log("Company {$_SESSION['company_id']} status check failed: " . ($company ? $company['status'] : 'not found'));
+
+                // Store the error message before destroying session
+                $error_message = $company ?
+                    "Company account is not active or has been suspended" :
+                    "Company account not found";
+
+                // Clear all session data
+                session_unset();
                 session_destroy();
-                header("Location:" . BASE_URL . "login.php?error=Company account is not active");
+
+                // Start a new session for the error message
+                session_start();
+                $_SESSION['error'] = $error_message;
+
+                header("Location:" . BASE_URL . "login.php?error=" . urlencode($error_message));
                 exit;
             }
         } catch (PDOException $e) {
             error_log("Company status check error: " . $e->getMessage());
+            // On database error, err on the side of caution and log out the user
+            session_destroy();
+            session_start();
+            header("Location:" . BASE_URL . "login.php?error=" . urlencode("System error occurred. Please try again."));
+            exit;
         }
-    }
-
-    //If restricted URLs like proxies and not is_superadmin then redirect to client dashboard.
-    $restricted_urls = ['proxymanager'];
-    // Check if current URL contains any restricted paths
-    $is_restricted = false;
-    foreach ($restricted_urls as $restricted_path) {
-        if (strpos($request_uri, $restricted_path) !== false) {
-            $is_restricted = true;
-            break;
-        }
-    }
-
-    // Redirect non-superadmins trying to access restricted URLs
-    if ($is_restricted && empty($_SESSION['is_superadmin'])) {
-        header("Location:" . BASE_URL . "dashboard.php?error=Access denied. Superadmin privileges required.");
-        exit;
     }
 }

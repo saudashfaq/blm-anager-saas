@@ -42,8 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             // Only check company status for non-superadmin users
-            if (!$user['is_superadmin'] && (!$user['company_id'] || $user['company_status'] !== 'active')) {
-                throw new Exception('Your company account is not active. Please contact support.');
+            if (!$user['is_superadmin'] && (!$user['company_id'] || !in_array($user['company_status'], ['active']))) {
+                throw new Exception('Your company account is not active or has been suspended. Please contact support.');
             }
 
             // Load subscription data - skip for superadmins

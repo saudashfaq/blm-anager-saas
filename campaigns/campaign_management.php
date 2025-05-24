@@ -9,7 +9,8 @@ $pageTitle = 'Campaign Manager';
 $bodyClass = 'theme-light';
 
 // Get campaigns with backlink counts, sorted by created_at DESC (latest first)
-$stmt = $pdo->query("
+$company_id = $_SESSION['company_id'];
+$stmt = $pdo->prepare("
     SELECT 
         c.*,
         COUNT(DISTINCT b.id) as total_backlinks,
@@ -18,9 +19,11 @@ $stmt = $pdo->query("
         SUM(CASE WHEN b.status = 'pending' THEN 1 ELSE 0 END) as pending_backlinks
     FROM campaigns c
     LEFT JOIN backlinks b ON c.id = b.campaign_id
+    WHERE c.company_id = ?
     GROUP BY c.id
     ORDER BY c.created_at DESC
 ");
+$stmt->execute([$company_id]);
 $campaigns = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Include header

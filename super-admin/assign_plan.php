@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../middleware.php';
+require_once __DIR__ . '/superadmin_middleware.php';
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../subscriptions/config/stripe.php';
@@ -7,7 +7,8 @@ require_once __DIR__ . '/../config/subscription_plans.php';
 
 // Only allow superadmins to access this script
 if (!isset($_SESSION['is_superadmin']) || $_SESSION['is_superadmin'] !== 1) {
-    die('Access denied. Superadmin privileges required.');
+    header('Location: ' . BASE_URL . 'dashboard.php?error=' . urlencode('Access denied. Superadmin privileges required.'));
+    exit;
 }
 
 function assignPlanToCompany($companyId, $planName, $pdo)

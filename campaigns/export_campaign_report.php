@@ -12,10 +12,11 @@ if (!isset($_GET['campaign_id']) || !is_numeric($_GET['campaign_id'])) {
 $campaign_id = (int)$_GET['campaign_id'];
 
 // Get campaign details
+$company_id = $_SESSION['company_id'];
 $stmt = $pdo->prepare("
-    SELECT * FROM campaigns WHERE id = ?
+    SELECT * FROM campaigns WHERE id = ? AND company_id = ?
 ");
-$stmt->execute([$campaign_id]);
+$stmt->execute([$campaign_id, $company_id]);
 $campaign = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$campaign) {
@@ -27,10 +28,11 @@ $stmt = $pdo->prepare("
     SELECT b.*, u.username as created_by_username 
     FROM backlinks b
     LEFT JOIN users u ON b.created_by = u.id
-    WHERE b.campaign_id = ? 
+    JOIN campaigns c ON b.campaign_id = c.id
+    WHERE b.campaign_id = ? AND c.company_id = ?
     ORDER BY b.created_at DESC
 ");
-$stmt->execute([$campaign_id]);
+$stmt->execute([$campaign_id, $company_id]);
 $backlinks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Set headers for CSV download

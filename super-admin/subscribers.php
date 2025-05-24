@@ -1,13 +1,5 @@
 <?php
-require_once __DIR__ . '/../middleware.php';
-require_once __DIR__ . '/../config/config.php';
-require_once __DIR__ . '/../config/db.php';
-
-// Only allow superadmins to access this page
-if (!isset($_SESSION['is_superadmin']) || $_SESSION['is_superadmin'] !== 1) {
-    header('Location: ' . BASE_URL . 'login.php');
-    exit;
-}
+require_once __DIR__ . '/superadmin_middleware.php';
 
 // Pagination setup
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;

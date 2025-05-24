@@ -25,8 +25,9 @@ function validateProfileData(array $data): ValidationHelper
 function checkDuplicates(PDO $pdo, string $username, string $email, int $userId): bool
 {
     try {
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE (username = ? OR email = ?) AND id != ?");
-        $stmt->execute([$username, $email, $userId]);
+        $company_id = $_SESSION['company_id'];
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE (username = ? OR email = ?) AND id != ? AND company_id = ?");
+        $stmt->execute([$username, $email, $userId, $company_id]);
         return $stmt->fetch() !== false;
     } catch (PDOException $e) {
         sendErrorResponse(500, 'Error checking duplicates: ' . $e->getMessage());
@@ -38,17 +39,16 @@ function checkDuplicates(PDO $pdo, string $username, string $email, int $userId)
 function updateProfile(PDO $pdo, int $userId, string $username, string $email): void
 {
     try {
-
         if (empty($_SESSION['user_id']) || $_SESSION['user_id'] !== $userId) {
-
             throw new Exception('Unauthorised attempt to update profile');
         }
 
-        $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ? WHERE id = ?");
-        $stmt->execute([$username, $email, $userId]);
+        $company_id = $_SESSION['company_id'];
+        $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ? WHERE id = ? AND company_id = ?");
+        $stmt->execute([$username, $email, $userId, $company_id]);
 
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE id = ?");
-        $stmt->execute([$userId]);
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE id = ? AND company_id = ?");
+        $stmt->execute([$userId, $company_id]);
         if (!$stmt->fetch()) {
             throw new Exception('Failed to update profile');
         }
@@ -98,10 +98,11 @@ header('Content-Type: application/json');
 $userId = (int)$_SESSION['user_id'];
 $username = trim($_POST['username'] ?? '');
 $email = trim($_POST['email'] ?? '');
+$company_id = $_SESSION['company_id'];
 
 // Validate that the user exists and is an admin
-$stmt = $pdo->prepare("SELECT id FROM users WHERE id = ? AND role = 'admin'");
-$stmt->execute([$userId]);
+$stmt = $pdo->prepare("SELECT id FROM users WHERE id = ? AND role = 'admin' AND company_id = ?");
+$stmt->execute([$userId, $company_id]);
 if (!$stmt->fetch()) {
     sendErrorResponse(403, 'Unauthorized access');
     exit;

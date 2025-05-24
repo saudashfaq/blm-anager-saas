@@ -1,52 +1,48 @@
 <?php
 session_start();
+require_once __DIR__ . '/../../../config/config.php';
 require_once __DIR__ . '/../../../config/db.php';
 require_once __DIR__ . '/GoogleAuth.php';
+require_once __DIR__ . '/../../../includes/registration_helper.php';
 
 $googleAuth = new GoogleAuth();
 $userData = $googleAuth->handleCallback($_GET['code']);
 
 if ($userData) {
     try {
-        $pdo->beginTransaction();
-
         // Check if user exists
         $stmt = $pdo->prepare("SELECT id, company_id FROM users WHERE email = ?");
         $stmt->execute([$userData['email']]);
         $user = $stmt->fetch();
 
         if ($user) {
-            // User exists - log them in
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['company_id'] = $user['company_id'];
+            // User exists - initialize their session
+            initializeUserSession($user['id'], $user['company_id']);
             $redirect = BASE_URL . "dashboard.php";
         } else {
-            // Create new company
-            $stmt = $pdo->prepare("INSERT INTO companies (name, email, created_at) VALUES (?, ?, NOW())");
-            $stmt->execute([$userData['name'] . "'s Company", $userData['email']]);
-            $company_id = $pdo->lastInsertId();
+            // Prepare user data for registration
+            $registrationData = [
+                'company_name' => $userData['name'] . "'s Company",
+                'company_email' => $userData['email'],
+                'username' => explode('@', $userData['email'])[0],
+                'email' => $userData['email']
+            ];
 
-            // Create new user
-            $stmt = $pdo->prepare("INSERT INTO users (company_id, username, email, role, created_at) VALUES (?, ?, ?, 'admin', NOW())");
-            $stmt->execute([
-                $company_id,
-                explode('@', $userData['email'])[0], // Use email prefix as username
-                $userData['email']
-            ]);
-            $user_id = $pdo->lastInsertId();
+            // Register the new user - session will be initialized in registerUser()
+            $result = registerUser($registrationData);
 
-            $_SESSION['user_id'] = $user_id;
-            $_SESSION['company_id'] = $company_id;
-            $redirect = BASE_URL . "dashboard.php";
+            if ($result['success']) {
+                $redirect = BASE_URL . "dashboard.php";
+            } else {
+                throw new Exception($result['error']);
+            }
         }
 
-        $pdo->commit();
         header("Location: " . $redirect);
         exit;
     } catch (Exception $e) {
-        $pdo->rollBack();
-        error_log("Google Auth DB Error: " . $e->getMessage());
-        header("Location: " . BASE_URL . "login.php?error=Authentication failed");
+        error_log("Google Auth Error: " . $e->getMessage());
+        header("Location: " . BASE_URL . "login.php?error=" . urlencode($e->getMessage()));
         exit;
     }
 } else {

@@ -56,6 +56,12 @@ $jobs = [
         'interval' => 30, // minutes
         'enabled' => true,
         'description' => 'Verifies backlinks status'
+    ],
+    'verification_report_emailer' => [
+        'file' => 'VerificationReportEmailer.php',
+        'interval' => 30, // minutes
+        'enabled' => true,
+        'description' => 'Sends verification report emails'
     ]
 ];
 

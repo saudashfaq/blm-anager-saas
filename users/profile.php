@@ -14,8 +14,9 @@ if ($_SESSION['role'] !== 'admin') {
 
 // Fetch the logged-in admin's details
 $userId = $_SESSION['user_id'];
-$stmt = $pdo->prepare("SELECT username, email FROM users WHERE id = ? AND role = 'admin'");
-$stmt->execute([$userId]);
+$company_id = $_SESSION['company_id'];
+$stmt = $pdo->prepare("SELECT username, email FROM users WHERE id = ? AND company_id = ?");
+$stmt->execute([$userId, $company_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$user) {

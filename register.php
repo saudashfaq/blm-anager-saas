@@ -2,6 +2,12 @@
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/validationHelper.php';
+require_once __DIR__ . '/auth/google/functions/GoogleAuth.php';
+require_once __DIR__ . '/includes/registration_helper.php';
+
+// Initialize Google Auth
+$googleAuth = new GoogleAuth();
+$googleAuthUrl = $googleAuth->getAuthUrl();
 
 $errors = [];
 $success = false;
@@ -33,34 +39,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ->regex('password', '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/', 'Password must contain at least one uppercase letter, one lowercase letter, and one number');
 
     if ($validator->passes()) {
-        try {
-            $pdo->beginTransaction();
-
-            // Create company
-            $stmt = $pdo->prepare("INSERT INTO companies (name, email, phone, created_at) VALUES (?, ?, ?, NOW())");
-            $stmt->execute([
-                $_POST['company_name'],
-                $_POST['company_email'],
-                $_POST['company_phone']
-            ]);
-            $company_id = $pdo->lastInsertId();
-
-            // Create admin user
-            $hashedPassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("INSERT INTO users (company_id, username, email, password, role, created_at) VALUES (?, ?, ?, ?, 'admin', NOW())");
-            $stmt->execute([
-                $company_id,
-                $_POST['username'],
-                $_POST['email'],
-                $hashedPassword
-            ]);
-
-            $pdo->commit();
+        $result = registerUser($_POST);
+        if ($result['success']) {
             $success = true;
-        } catch (PDOException $e) {
-            $pdo->rollBack();
-            $errors[] = 'Registration failed. Please try again.';
-            error_log($e->getMessage());
+        } else {
+            $errors[] = $result['error'];
         }
     } else {
         $errors = $validator->getErrors();
@@ -177,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             <span class="text-muted">OR</span>
                                         </div>
 
-                                        <a href="auth/google/functions/google_callback.php" class="btn btn-outline-secondary btn-lg w-100">
+                                        <a href="<?php echo htmlspecialchars($googleAuthUrl); ?>" class="btn btn-outline-secondary btn-lg w-100">
                                             <span class="d-flex align-items-center justify-content-center">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-google me-2" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />

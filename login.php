@@ -3,9 +3,15 @@
 //require_once __DIR__ . '/config/validationHelper.php';
 
 session_start();
+require_once __DIR__ . '/config/config.php';
+require_once __DIR__ . '/auth/google/functions/GoogleAuth.php';
 
 $errors = [];
 $pageTitle = 'Login';
+
+// Initialize Google Auth
+$googleAuth = new GoogleAuth();
+$googleAuthUrl = $googleAuth->getAuthUrl();
 
 // Check for error messages from process_login.php
 if (isset($_GET['error'])) {
@@ -98,7 +104,7 @@ include_once __DIR__ . '/includes/header.php';
                                     <span class="text-muted">OR</span>
                                 </div>
 
-                                <a href="auth/google/functions/google_callback.php" class="btn btn-outline-secondary btn-lg">
+                                <a href="<?php echo htmlspecialchars($googleAuthUrl); ?>" class="btn btn-outline-secondary btn-lg">
                                     <span class="d-flex align-items-center justify-content-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-google me-2" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />

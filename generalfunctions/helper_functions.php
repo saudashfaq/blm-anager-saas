@@ -1,5 +1,5 @@
 <?php
-
+/*
 // Function to extract base domain from a URL
 function getBaseDomain($url)
 {
@@ -53,3 +53,4 @@ function checkDuplicateBaseDomain($pdo, $campaign_id, $backlink_url, $current_ba
     $campaignBaseDomains = getCampaignBaseDomains($pdo, $campaign_id);
     return isDuplicateInBaseDomains($backlink_url, $campaignBaseDomains);
 }
+*/

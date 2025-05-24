@@ -23,8 +23,8 @@ if (!isset($_SESSION['subscription'])) {
 $limitChecker = new SubscriptionLimitChecker($pdo, $company_id, $_SESSION['subscription']);
 
 // Check if the campaign exists and fetch its base_url
-$stmt = $pdo->prepare("SELECT id, name, base_url FROM campaigns WHERE id = ?");
-$stmt->execute([$campaignId]);
+$stmt = $pdo->prepare("SELECT id, name, base_url FROM campaigns WHERE id = ? AND company_id = ?");
+$stmt->execute([$campaignId, $company_id]);
 $campaign = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$campaign) {

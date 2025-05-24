@@ -1,18 +1,10 @@
 <?php
-$pageTitle = 'Proxy Manager';
-$bodyClass = 'theme-light';
-require_once __DIR__ . '/middleware.php';
-require_once __DIR__ . '/config/ProxyManager.php';
-
-$pageTitle = 'Proxy Manager';
-$bodyClass = 'theme-light';
+require_once __DIR__ . '/superadmin_middleware.php';
+require_once __DIR__ . '/../config/ProxyManager.php';
 
 //TODO: do the real time testing of proxymanager.php
 //TODO: Implement emails and notifications
 //TODO: verify csrf token refreshes and verified on all post requests either ajax or POST
-
-
-
 
 // Initialize ProxyManager
 $proxyManager = new ProxyManager();
@@ -135,14 +127,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     exit;
 }
 
-$proxies = json_decode(file_get_contents(__DIR__ . '/config/proxies.json'), true) ?: [];
+$proxies = json_decode(file_get_contents(__DIR__ . '/../config/proxies.json'), true) ?: [];
+
+$pageTitle = 'Proxy Manager';
+$bodyClass = 'theme-light';
 
 // Include header
-include_once __DIR__ . '/includes/header.php';
+include_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="page">
-    <?php include_once __DIR__ . '/includes/navbar.php'; ?>
+    <?php include_once __DIR__ . '/../includes/navbar.php'; ?>
     <div class="container mt-4">
         <h2>
             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shield me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -436,6 +431,8 @@ include_once __DIR__ . '/includes/header.php';
     </div>
 </div>
 
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>
+
 <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
 <script>
     // Initialize tooltips
@@ -579,8 +576,5 @@ include_once __DIR__ . '/includes/header.php';
     });
 </script>
 
-
 <!-- Include proxy manager specific JavaScript -->
 <script src="<?= defined('BASE_URL') ? BASE_URL : '/' ?>includes/js/proxymanager.js"></script>
-
-<?php include_once __DIR__ . '/includes/footer.php'; ?>

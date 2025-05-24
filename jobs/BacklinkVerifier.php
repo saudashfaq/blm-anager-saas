@@ -65,8 +65,10 @@ class BacklinkVerifier
                c.id AS campaign_id, c.verification_frequency, c.base_url
         FROM backlinks b
         INNER JOIN campaigns c ON b.campaign_id = c.id
+        INNER JOIN companies comp ON c.company_id = comp.id
         LEFT JOIN backlink_verification_helper h ON c.id = h.campaign_id
         WHERE c.status = 'enabled'
+          AND comp.status = 'active'
           AND NOT EXISTS (
               SELECT 1 FROM verification_logs vl 
               WHERE vl.backlink_id = b.id 
