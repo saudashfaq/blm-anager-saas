@@ -1,10 +1,20 @@
 <?php
 // Load environment variables if .env file exists
-if (file_exists(__DIR__ . '/../.env')) {
-    $envVars = parse_ini_file(__DIR__ . '/../.env');
-    foreach ($envVars as $key => $value) {
-        putenv("$key=$value");
-        $_ENV[$key] = $value;
+$envFile = __DIR__ . '/../.env';
+if (file_exists($envFile)) {
+    try {
+        $envVars = parse_ini_file($envFile, false, INI_SCANNER_RAW);
+        if ($envVars === false) {
+            error_log('Error parsing .env file');
+        } else {
+            foreach ($envVars as $key => $value) {
+                $value = trim($value);
+                putenv("$key=$value");
+                $_ENV[$key] = $value;
+            }
+        }
+    } catch (Exception $e) {
+        error_log('Error loading .env file: ' . $e->getMessage());
     }
 }
 
@@ -15,8 +25,28 @@ define('DB_PASS', getenv('DB_PASS') ?: 'root');
 define('DB_NAME', getenv('DB_NAME') ?: 'backlinks_manager_saas');
 
 // Application URLs
-define('SITE_URL', rtrim(getenv('SITE_URL') ?: 'http://localhost:8888/backlinks_manager_saas', '/'));
-define('BASE_URL', rtrim(getenv('BASE_URL') ?: SITE_URL . '/', '/') . '/');
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+$host = $_SERVER['HTTP_HOST'];
+$scriptDir = dirname($_SERVER['SCRIPT_NAME']);
+$baseDir = rtrim($scriptDir, '/\\');
+
+// Get SITE_URL from environment or construct it
+$siteUrl = getenv('SITE_URL');
+if (empty($siteUrl)) {
+    $siteUrl = $protocol . $host . $baseDir;
+}
+
+// Normalize URLs
+$siteUrl = rtrim($siteUrl, '/');
+define('SITE_URL', $siteUrl);
+define('BASE_URL', $siteUrl . '/');
+
+// Function to generate application URLs
+function url($path = '')
+{
+    $path = ltrim($path, '/');
+    return BASE_URL . $path;
+}
 
 // Error Reporting
 if (getenv('APP_ENV') === 'production') {

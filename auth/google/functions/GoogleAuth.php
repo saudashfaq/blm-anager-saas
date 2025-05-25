@@ -11,7 +11,14 @@ class GoogleAuth
         $this->client = new Google_Client();
         $this->client->setClientId(GOOGLE_CLIENT_ID);
         $this->client->setClientSecret(GOOGLE_CLIENT_SECRET);
-        $this->client->setRedirectUri(GOOGLE_REDIRECT_URL);
+
+        // Ensure redirect URL is absolute
+        $redirectUrl = GOOGLE_REDIRECT_URL;
+        if (!filter_var($redirectUrl, FILTER_VALIDATE_URL)) {
+            throw new InvalidArgumentException('Invalid redirect URL: ' . $redirectUrl);
+        }
+
+        $this->client->setRedirectUri($redirectUrl);
         $this->client->setScopes(GOOGLE_SCOPES);
     }
 

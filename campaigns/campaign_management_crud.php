@@ -13,28 +13,16 @@ if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'user') {
     exit;
 }
 
+$company_id = get_current_company_id();
+
 // Add at the beginning after includes
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
-
-    /*
-    //die('inside post method');
-    // Verify CSRF token
-    if (!verifyCSRFToken($_POST['csrf_token'])) {
-        http_response_code(403);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Invalid CSRF token'
-        ]);
-        exit;
-    }
-        */
 
     // Handle get single campaign request
     if (isset($_POST['action']) && $_POST['action'] === 'get') {
         try {
             $campaign_id = intval($_POST['campaign_id']);
-            $company_id = get_current_company_id();
 
             // Check ownership if not admin
             if ($_SESSION['role'] !== 'admin') {
@@ -123,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $base_url = trim($_POST['base_url']);
             $verification_frequency = trim($_POST['verification_frequency']);
             $user_id = $_SESSION['user_id'];
-            $company_id = get_current_company_id();
+
 
             //check if campaign is already available with the same base URL
             $stmt = $pdo->prepare("SELECT EXISTS(SELECT 1 FROM campaigns WHERE base_url = ? AND company_id = ?) as campaign_exists");
@@ -188,7 +176,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $campaign_id = intval($_POST['campaign_id']);
             $campaign_name = trim($_POST['campaign_name']);
             $verification_frequency = trim($_POST['verification_frequency']);
-            $company_id = get_current_company_id();
 
             // Debug output
             /*
@@ -273,7 +260,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action']) && $_POST['action'] === 'delete_campaign') {
         try {
             $campaign_id = intval($_POST['campaign_id']);
-            $company_id = get_current_company_id();
 
             // Check ownership
             if ($_SESSION['role'] !== 'admin') {

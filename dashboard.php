@@ -207,7 +207,7 @@ include_once __DIR__ . '/includes/header.php';
         <div class="welcome-message mt-4">
             <h2>Add Your First Backlink</h2>
             <p>You've created a campaign, but you haven't added any backlinks yet. Start tracking your first backlink now!</p>
-            <a href="<?= BASE_URL ?>campaigns/manage_backlinks.php" class="btn btn-primary">Add Your First Backlink</a>
+            <a href="<?= BASE_URL ?>campaigns/campaign_management.php" class="btn btn-primary">Add Your First Backlink</a>
         </div>
     <?php else: ?>
         <!-- Dashboard with all stats when data is available -->

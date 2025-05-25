@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/superadmin_middleware.php';
+require_once __DIR__ . '/../config/db.php';
 
 // Pagination setup
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;

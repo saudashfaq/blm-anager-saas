@@ -12,22 +12,27 @@ $googleAuthUrl = $googleAuth->getAuthUrl();
 $errors = [];
 $success = false;
 
+// Store old values
+$old = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Store submitted values
+    $old = $_POST;
+
     $validator = new ValidationHelper($_POST);
 
     // Validate company details
     $validator
-        ->required('company_name', 'Company name is required')
+        //->required('company_name', 'Company name is required')
         ->minLength('company_name', 2, 'Company name must be at least 2 characters')
         ->maxLength('company_name', 255, 'Company name must not exceed 255 characters')
         ->required('company_email', 'Company email is required')
         ->email('company_email', 'Please enter a valid company email')
-        ->required('company_phone', 'Company phone is required')
+        //->required('company_phone', 'Company phone is required')
         ->regex('company_phone', '/^[0-9+\-\s()]{10,20}$/', 'Please enter a valid phone number');
 
     // Validate admin user details
     $validator
-        ->required('username', 'Username is required')
+        //->required('username', 'Username is required')
         ->minLength('username', 3, 'Username must be at least 3 characters')
         ->maxLength('username', 50, 'Username must not exceed 50 characters')
         ->regex('username', '/^[a-zA-Z0-9_]+$/', 'Username can only contain letters, numbers, and underscores')
@@ -42,12 +47,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = registerUser($_POST);
         if ($result['success']) {
             $success = true;
+            $old = []; // Clear old values on success
         } else {
             $errors[] = $result['error'];
         }
     } else {
         $errors = $validator->getErrors();
     }
+}
+
+// Helper function to get old value
+function old($field, $default = '')
+{
+    global $old;
+    return isset($old[$field]) ? htmlspecialchars($old[$field]) : $default;
 }
 ?>
 <!DOCTYPE html>
@@ -103,7 +116,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             <div>
                                                 <ul class="mb-0 list-unstyled">
                                                     <?php foreach ($errors as $error): ?>
-                                                        <li><?php echo htmlspecialchars($error); ?></li>
+                                                        <?php if (is_array($error)): ?>
+                                                            <?php foreach ($error as $e): ?>
+                                                                <li><?php echo htmlspecialchars($e); ?></li>
+                                                            <?php endforeach; ?>
+                                                        <?php else: ?>
+                                                            <li><?php echo htmlspecialchars($error); ?></li>
+                                                        <?php endif; ?>
                                                     <?php endforeach; ?>
                                                 </ul>
                                             </div>
@@ -117,15 +136,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <div class="row g-3">
                                             <div class="col-12">
                                                 <label class="form-label">Company Name</label>
-                                                <input type="text" class="form-control form-control-lg" name="company_name" required>
+                                                <input type="text" class="form-control form-control-lg" name="company_name" value="<?= old('company_name') ?>" required>
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label">Company Email</label>
-                                                <input type="email" class="form-control form-control-lg" name="company_email" required>
+                                                <input type="email" class="form-control form-control-lg" name="company_email" value="<?= old('company_email') ?>" required>
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label">Company Phone</label>
-                                                <input type="tel" class="form-control form-control-lg" name="company_phone" required>
+                                                <input type="tel" class="form-control form-control-lg" name="company_phone" value="<?= old('company_phone') ?>" required>
                                             </div>
                                         </div>
                                     </div>
@@ -135,11 +154,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <div class="row g-3">
                                             <div class="col-12">
                                                 <label class="form-label">Username</label>
-                                                <input type="text" class="form-control form-control-lg" name="username" required>
+                                                <input type="text" class="form-control form-control-lg" name="username" value="<?= old('username') ?>" required>
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label">Email</label>
-                                                <input type="email" class="form-control form-control-lg" name="email" required>
+                                                <input type="email" class="form-control form-control-lg" name="email" value="<?= old('email') ?>" required>
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label">Password</label>

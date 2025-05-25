@@ -3,6 +3,7 @@ require_once __DIR__ . '/../middleware.php';
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../generalfunctions/general_functions.php';
 require_once __DIR__ . '/../subscriptions/classes/SubscriptionLimitChecker.php';
+require_once __DIR__ . '/../users/company_helper.php';
 
 if (empty($_GET['campaign_id']) || !is_numeric($_GET['campaign_id'])) {
     header('HTTP/1.1 403 Forbidden');

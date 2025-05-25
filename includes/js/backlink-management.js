@@ -3,7 +3,9 @@
  */
 document.addEventListener('DOMContentLoaded', function() {
     // DOM elements
-    const backlinksTable = document.getElementById('backlinks-table');
+    const selectAllCheckbox = document.getElementById('select-all');
+    const bulkDeleteBtn = document.getElementById('bulk-delete-btn');
+    const backlinksTable = document.querySelector('.table');
     const filterForm = document.getElementById('filter-form');
     const addBacklinkForm = document.getElementById('add-backlink-form');
     const editBacklinkForm = document.getElementById('edit-backlink-form');
@@ -42,6 +44,115 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Handle select all checkbox
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.backlink-select');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateBulkDeleteButton();
+        });
+    }
+
+    // Handle individual checkbox changes
+    document.addEventListener('change', function(e) {
+        if (e.target && e.target.classList.contains('backlink-select')) {
+            updateBulkDeleteButton();
+            
+            // Update select all checkbox state
+            const allCheckboxes = document.querySelectorAll('.backlink-select');
+            const checkedCheckboxes = document.querySelectorAll('.backlink-select:checked');
+            if (selectAllCheckbox) {
+                selectAllCheckbox.checked = allCheckboxes.length === checkedCheckboxes.length;
+                selectAllCheckbox.indeterminate = checkedCheckboxes.length > 0 && checkedCheckboxes.length < allCheckboxes.length;
+            }
+        }
+    });
+
+    // Update bulk delete button state
+    function updateBulkDeleteButton() {
+        const selectedCheckboxes = document.querySelectorAll('.backlink-select:checked');
+        if (bulkDeleteBtn) {
+            bulkDeleteBtn.disabled = selectedCheckboxes.length === 0;
+        }
+    }
+
+    // Handle bulk delete
+    if (bulkDeleteBtn) {
+        bulkDeleteBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const selectedIds = Array.from(document.querySelectorAll('.backlink-select:checked'))
+                .map(checkbox => checkbox.value);
+
+            if (selectedIds.length === 0) {
+                showAlert('warning', 'Please select backlinks to delete.');
+                return;
+            }
+
+            if (confirm('Are you sure you want to delete the selected backlinks?')) {
+                const formData = new FormData();
+                formData.append('action', 'bulk_delete');
+                formData.append('ids', JSON.stringify(selectedIds));
+                formData.append('csrf_token', document.querySelector('input[name="csrf_token"]').value);
+
+                fetch('backlink_management_crud.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert('success', data.message);
+                        setTimeout(() => window.location.reload(), 1500);
+                    } else {
+                        showAlert('danger', data.message || 'An error occurred while deleting the backlinks.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('danger', 'An error occurred while processing your request.');
+                });
+            }
+        });
+    }
+
+    // Handle single delete
+    document.addEventListener('click', function(e) {
+        if (e.target && (e.target.closest('.delete-single') || e.target.matches('.delete-single *'))) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const button = e.target.closest('.delete-single');
+            const backlinkId = button.dataset.id;
+
+            if (confirm('Are you sure you want to delete this backlink?')) {
+                const formData = new FormData();
+                formData.append('action', 'delete');
+                formData.append('id', backlinkId);
+                formData.append('csrf_token', document.querySelector('input[name="csrf_token"]').value);
+
+                fetch('backlink_management_crud.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert('success', data.message);
+                        setTimeout(() => window.location.reload(), 1500);
+                    } else {
+                        showAlert('danger', data.message || 'An error occurred while deleting the backlink.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('danger', 'An error occurred while processing your request.');
+                });
+            }
+        }
+    });
+    
     // Handle add backlink form submission
     if (addBacklinkForm) {
         addBacklinkForm.addEventListener('submit', function(e) {
@@ -56,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const formData = new FormData(addBacklinkForm);
             
             // Send AJAX request
-            fetch('backlink_management_crud.php', {
+            fetch(addBacklinkForm.action, {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -66,26 +177,20 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Show success message
                     showAlert('success', data.message);
-                    
-                    // Close modal and refresh page after delay
                     setTimeout(() => {
                         document.querySelector('#add-backlink-modal .btn-close').click();
                         window.location.reload();
                     }, 1500);
                 } else {
-                    // Show validation errors
                     if (data.errors) {
                         Object.keys(data.errors).forEach(field => {
-                            const errorElement = document.querySelector(`#${field}-error`);
+                            const errorElement = document.querySelector(`[name="${field}"] + .error-message`);
                             if (errorElement) {
                                 errorElement.textContent = data.errors[field];
                             }
                         });
                     }
-                    
-                    // Show general error message
                     if (data.message) {
                         showAlert('danger', data.message);
                     }
@@ -150,39 +255,6 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => {
                 console.error('Error:', error);
                 showAlert('danger', 'An error occurred while processing your request.');
-            });
-        });
-    }
-    
-    // Handle delete backlink buttons
-    if (deleteBacklinkButtons) {
-        deleteBacklinkButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                if (confirm('Are you sure you want to delete this backlink?')) {
-                    const backlinkId = this.getAttribute('data-backlink-id');
-                    const campaignId = this.getAttribute('data-campaign-id');
-                    
-                    // Send AJAX request
-                    fetch(`backlink_management_crud.php?action=delete&id=${backlinkId}&campaign_id=${campaignId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                // Show success message and reload page
-                                showAlert('success', data.message);
-                                setTimeout(() => {
-                                    window.location.reload();
-                                }, 1500);
-                            } else {
-                                showAlert('danger', data.message || 'An error occurred while deleting the backlink.');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            showAlert('danger', 'An error occurred while processing your request.');
-                        });
-                }
             });
         });
     }
