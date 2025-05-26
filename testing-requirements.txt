@@ -1,0 +1,189 @@
+Comprehensive Manual Testing Checklist for the application, organized by segments:
+
+### 1. Registration System
+**Form Validation**
+- [ ] Test empty form submission
+- [ ] Test partial form submission
+- [ ] Test with invalid email formats for both company and admin email
+- [ ] Test password requirements:
+  - Minimum 8 characters
+  - At least one uppercase letter
+  - At least one lowercase letter
+  - At least one number
+- [ ] Test username format (letters, numbers, underscores only)
+- [ ] Test phone number format validation
+- [ ] Verify form retains values after validation errors
+- [ ] Test maximum length constraints for all fields
+- [ ] Test special characters in input fields
+
+**Google Sign-up Integration**
+- [ ] Test Google sign-up button functionality
+- [ ] Verify redirect to Google authentication
+- [ ] Test successful Google account connection
+- [ ] Test canceling Google authentication
+- [ ] Test with different Google account types
+- [ ] Verify data mapping from Google profile
+
+### 2. Login System
+**Standard Login**
+- [ ] Test with valid credentials
+- [ ] Test with invalid credentials
+- [ ] Test password case sensitivity
+- [ ] Test "Remember Me" functionality
+- [ ] Test session persistence
+- [ ] Test session timeout
+- [ ] Test concurrent logins
+
+**Google Login**
+- [ ] Test Google login button
+- [ ] Verify OAuth flow
+- [ ] Test account linking
+- [ ] Test login with previously connected Google account
+- [ ] Test login state persistence
+
+### 3. Campaign Management
+**Campaign Creation**
+- [ ] Test creating campaign with minimum required fields
+- [ ] Test campaign name uniqueness
+- [ ] Test URL validation
+- [ ] Test campaign limits based on subscription
+- [ ] Test campaign description formatting
+
+**Campaign Listing**
+- [ ] Verify pagination
+- [ ] Test sorting functionality
+- [ ] Test filtering options
+- [ ] Verify campaign statistics display
+- [ ] Test campaign search functionality
+- [ ] Verify campaign count accuracy
+
+### 4. Backlink Management
+**Single Backlink Operations**
+- [ ] Test adding single backlink
+- [ ] Test URL validation
+- [ ] Test anchor text input
+- [ ] Test target URL validation
+- [ ] Test duplicate detection
+- [ ] Test status updates
+- [ ] Test deleting single backlink
+
+**Bulk Operations**
+- [ ] Test bulk upload functionality
+- [ ] Test file format validation
+- [ ] Test duplicate handling in bulk upload
+- [ ] Test bulk delete functionality
+- [ ] Test select all/deselect all
+- [ ] Test partial selection deletion
+
+**Backlink Listing**
+- [ ] Test pagination
+- [ ] Test sorting by different columns
+- [ ] Test filtering by status
+- [ ] Test filtering by date
+- [ ] Test search functionality
+- [ ] Verify backlink count accuracy
+- [ ] Test duplicate indicators
+
+### 5. Subscription System
+**Plan Management**
+- [ ] Test free plan limitations
+- [ ] Test basic plan features
+- [ ] Test premium plan features
+- [ ] Test enterprise plan features
+- [ ] Verify upgrade path
+- [ ] Test downgrade restrictions
+
+**Limit Enforcement**
+- [ ] Test campaign creation limits
+- [ ] Test backlink creation limits
+- [ ] Test bulk upload limits
+- [ ] Test feature access based on plan
+- [ ] Verify limit notifications
+- [ ] Test grace period handling
+
+### 6. UI/UX Testing
+**Responsive Design**
+- [ ] Test on desktop browsers (Chrome, Firefox, Safari, Edge)
+- [ ] Test on tablets (iOS, Android)
+- [ ] Test on mobile devices
+- [ ] Verify layout adaptability
+- [ ] Test navigation menu responsiveness
+- [ ] Verify form responsiveness
+
+**User Interface**
+- [ ] Test all button states (normal, hover, active, disabled)
+- [ ] Verify error message visibility
+- [ ] Test success message display
+- [ ] Verify loading indicators
+- [ ] Test modal dialogs
+- [ ] Verify form field focus states
+- [ ] Test tooltip functionality
+
+### 7. Security Testing
+**Authentication**
+- [ ] Test session handling
+- [ ] Test CSRF protection
+- [ ] Test password strength requirements
+- [ ] Test login attempt limits
+- [ ] Test password reset functionality
+- [ ] Test account lockout mechanism
+
+**Authorization**
+- [ ] Test role-based access control
+- [ ] Test resource access permissions
+- [ ] Test API endpoint security
+- [ ] Test cross-account access prevention
+- [ ] Verify data isolation between companies
+
+### 8. Error Handling
+**Form Validation**
+- [ ] Test field-level error messages
+- [ ] Test form-level error messages
+- [ ] Verify error message clarity
+- [ ] Test error state persistence
+- [ ] Test error recovery paths
+
+**System Errors**
+- [ ] Test database connection errors
+- [ ] Test API failure handling
+- [ ] Test timeout handling
+- [ ] Test rate limit handling
+- [ ] Verify error logging
+- [ ] Test recovery procedures
+
+### 9. Performance Testing
+**Load Times**
+- [ ] Test initial page load
+- [ ] Test subsequent navigation
+- [ ] Test form submission response time
+- [ ] Test bulk operation performance
+- [ ] Test with different network conditions
+
+**Resource Usage**
+- [ ] Monitor memory usage
+- [ ] Test CPU utilization
+- [ ] Test database query performance
+- [ ] Test file upload/download speeds
+- [ ] Test concurrent user handling
+
+### 10. Integration Testing
+**External Services**
+- [ ] Test Google OAuth integration
+- [ ] Test email service integration
+- [ ] Test payment gateway integration
+- [ ] Test backup systems
+- [ ] Test monitoring systems
+
+**API Integration**
+- [ ] Test internal API endpoints
+- [ ] Test external API calls
+- [ ] Test API rate limiting
+- [ ] Test API error handling
+- [ ] Verify API response formats
+
+Each of these test cases should be performed under different conditions and edge cases should be considered. The tester should document any bugs or issues found, including:
+- Steps to reproduce
+- Expected behavior
+- Actual behavior
+- Screenshots or videos where applicable
+- Environment details (browser, OS, etc.)
