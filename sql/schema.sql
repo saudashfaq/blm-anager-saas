@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS companies (
     updated_at TIMESTAMP NULL,
     UNIQUE KEY unique_company_email (email),
     INDEX idx_company_status (status),
-    INDEX idx_subscription (subscription_plan, subscription_expires_at)
+    INDEX idx_subscription (subscription_plan)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS users (

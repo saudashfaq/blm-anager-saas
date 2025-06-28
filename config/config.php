@@ -1,6 +1,6 @@
 <?php
 // Load environment variables if .env file exists
-$envFile = __DIR__ . '/../.env';
+$envFile = __DIR__ . '/../../.env';
 if (file_exists($envFile)) {
     try {
         $envVars = parse_ini_file($envFile, false, INI_SCANNER_RAW);
@@ -16,6 +16,8 @@ if (file_exists($envFile)) {
     } catch (Exception $e) {
         error_log('Error loading .env file: ' . $e->getMessage());
     }
+} else {
+    error_log('No .env file found');
 }
 
 // Database Configuration
@@ -25,17 +27,18 @@ define('DB_PASS', getenv('DB_PASS') ?: 'root');
 define('DB_NAME', getenv('DB_NAME') ?: 'backlinks_manager_saas');
 
 // Application URLs
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
-$host = $_SERVER['HTTP_HOST'];
-$scriptDir = dirname($_SERVER['SCRIPT_NAME']);
-$baseDir = rtrim($scriptDir, '/\\');
+//$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+//$host = $_SERVER['HTTP_HOST'];
+//$scriptDir = dirname($_SERVER['SCRIPT_NAME']);
+//$baseDir = rtrim($scriptDir, '/\\');
 
 // Get SITE_URL from environment or construct it
 $siteUrl = getenv('SITE_URL');
+/*
 if (empty($siteUrl)) {
     $siteUrl = $protocol . $host . $baseDir;
 }
-
+*/
 // Normalize URLs
 $siteUrl = rtrim($siteUrl, '/');
 define('SITE_URL', $siteUrl);
