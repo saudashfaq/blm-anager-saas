@@ -315,9 +315,9 @@ include_once __DIR__ . '/../includes/header.php';
 
                     <div class="mb-3">
                         <label for="base-url" class="form-label required">Base URL</label>
-                        <input type="url" class="form-control" id="base-url" name="base_url" placeholder="https://example.com" required>
+                        <input type="text" class="form-control" id="base-url" name="base_url" placeholder="example.com" required>
                         <span id="base_url-error" class="error-message text-danger"></span>
-                        <div class="form-text">The main domain you're building backlinks for</div>
+                        <div class="form-text">Enter the main domain (e.g., example.com, https://example.com)</div>
                     </div>
 
                     <div class="mb-3">
