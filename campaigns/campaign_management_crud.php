@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ->minLength('campaign_name', 3)
                 ->maxLength('campaign_name', 255)
                 ->required('base_url')
-                ->url('base_url')
+                ->baseUrl('base_url')
                 ->minLength('base_url', 5)
                 ->maxLength('base_url', 255)
                 ->required('verification_frequency')
@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
             $campaign_name = trim($_POST['campaign_name']);
-            $base_url = trim($_POST['base_url']);
+            $base_url = $validator->sanitize('base_url');
             $verification_frequency = trim($_POST['verification_frequency']);
             $user_id = $_SESSION['user_id'];
 

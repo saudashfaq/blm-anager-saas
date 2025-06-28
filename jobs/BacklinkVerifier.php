@@ -273,17 +273,17 @@ class BacklinkVerifier
             $links = $dom->getElementsByTagName('a');
 
             $linkToSearch = $backlink['target_url'] ?? $backlink['base_url'];
-            $normalizedTarget = $this->normalizeUrl($linkToSearch);
             $anchorText = preg_replace('/\s+/', ' ', trim($backlink['anchor_text'] ?? ''));
 
             $targetFound = false;
             $anchorFound = false;
 
             foreach ($links as $link) {
-                $href = $this->normalizeUrl($link->getAttribute('href'));
+                $href = $link->getAttribute('href');
                 $text = preg_replace('/\s+/', ' ', trim($link->textContent));
 
-                if ($href === $normalizedTarget) {
+                // Check if the href matches the target URL in various formats
+                if ($this->urlsMatch($href, $linkToSearch)) {
                     $targetFound = true;
                     $result['target_url_found'] = true;
 
@@ -297,7 +297,7 @@ class BacklinkVerifier
             }
 
             if (!$targetFound) {
-                echo "Target URL ({$normalizedTarget}) not found in content for backlink ID: {$backlink['id']}\n";
+                echo "Target URL ({$linkToSearch}) not found in content for backlink ID: {$backlink['id']}\n";
             } elseif (!$anchorFound && !empty($anchorText)) {
                 echo "Anchor text ({$anchorText}) not found for backlink ID: {$backlink['id']}, but target URL was found\n";
             }
@@ -311,6 +311,97 @@ class BacklinkVerifier
         }
 
         return $result;
+    }
+
+    /**
+     * Check if two URLs match, considering various formats and normalizations
+     */
+    private function urlsMatch(string $href, string $targetUrl): bool
+    {
+        // Skip empty or invalid URLs
+        if (empty($href) || empty($targetUrl)) {
+            return false;
+        }
+
+        // Normalize both URLs for comparison
+        $normalizedHref = $this->normalizeUrl($href);
+        $normalizedTarget = $this->normalizeUrl($targetUrl);
+
+        // Debug logging (uncomment for troubleshooting)
+        // echo "Comparing URLs:\n";
+        // echo "  Original href: $href\n";
+        // echo "  Original target: $targetUrl\n";
+        // echo "  Normalized href: $normalizedHref\n";
+        // echo "  Normalized target: $normalizedTarget\n";
+
+        // Direct exact match
+        if ($normalizedHref === $normalizedTarget) {
+            // echo "  ✓ Direct match found\n";
+            return true;
+        }
+
+        // Handle relative URLs that start with /
+        if (strpos($href, '/') === 0) {
+            $hrefWithoutSlash = ltrim($href, '/');
+
+            // Check if the relative path matches the target
+            if ($hrefWithoutSlash === $normalizedTarget) {
+                // echo "  ✓ Relative path match (with slash)\n";
+                return true;
+            }
+
+            // Check if target contains the relative path
+            if (strpos($normalizedTarget, $hrefWithoutSlash) !== false) {
+                // echo "  ✓ Target contains relative path\n";
+                return true;
+            }
+        }
+
+        // Handle relative URLs without leading slash
+        if (strpos($href, 'http') !== 0 && strpos($href, '/') !== 0 && strpos($href, '#') !== 0 && strpos($href, 'mailto:') !== 0) {
+            // href is a relative path like "page.html" or "subfolder/page.html"
+            if (strpos($normalizedTarget, $href) !== false) {
+                // echo "  ✓ Relative path match (without slash)\n";
+                return true;
+            }
+
+            // Check if the relative path matches the end of the target URL
+            if (strpos($normalizedTarget, '/' . $href) !== false) {
+                // echo "  ✓ Target ends with relative path\n";
+                return true;
+            }
+        }
+
+        // Handle cases where href contains the target URL (for full URLs)
+        if (strpos($normalizedHref, $normalizedTarget) !== false) {
+            // echo "  ✓ Href contains target URL\n";
+            return true;
+        }
+
+        // Handle cases where target URL contains the href (for shorter hrefs)
+        if (strpos($normalizedTarget, $normalizedHref) !== false) {
+            // echo "  ✓ Target contains href\n";
+            return true;
+        }
+
+        // Handle query parameters - compare base URLs
+        $hrefBase = strtok($normalizedHref, '?');
+        $targetBase = strtok($normalizedTarget, '?');
+        if ($hrefBase === $targetBase) {
+            // echo "  ✓ Base URL match (ignoring query params)\n";
+            return true;
+        }
+
+        // Handle fragments - compare URLs without fragments
+        $hrefWithoutFragment = strtok($normalizedHref, '#');
+        $targetWithoutFragment = strtok($normalizedTarget, '#');
+        if ($hrefWithoutFragment === $targetWithoutFragment) {
+            // echo "  ✓ URL match (ignoring fragments)\n";
+            return true;
+        }
+
+        // echo "  ✗ No match found\n";
+        return false;
     }
 
     /**

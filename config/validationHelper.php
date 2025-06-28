@@ -253,6 +253,51 @@ class ValidationHelper
     }
 
     /**
+     * Validate base URL format (more flexible than url() - accepts domain names without scheme)
+     * @param string $field
+     * @param string $customMessage
+     * @return self
+     */
+    public function baseUrl(string $field, ?string $customMessage = null): self
+    {
+        if (isset($this->data[$field]) && !empty($this->data[$field])) {
+            $url = trim($this->data[$field]);
+
+            // Remove any existing scheme and www. for validation
+            $cleanUrl = preg_replace('#^https?://#i', '', $url);
+            $cleanUrl = preg_replace('#^www\.#i', '', $cleanUrl);
+
+            // Check if it's a valid domain format
+            if (!preg_match('/^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*$/', $cleanUrl)) {
+                $message = $customMessage ?? "The {$field} must be a valid domain name";
+                $this->errors[$field][] = $message;
+                return $this;
+            }
+
+            // Check if it has at least one dot (for TLD)
+            if (strpos($cleanUrl, '.') === false) {
+                $message = $customMessage ?? "The {$field} must include a valid domain with a TLD";
+                $this->errors[$field][] = $message;
+                return $this;
+            }
+
+            // Check TLD length
+            $parts = explode('.', $cleanUrl);
+            $tld = end($parts);
+            if (strlen($tld) < 2) {
+                $message = $customMessage ?? "The {$field} must have a valid TLD";
+                $this->errors[$field][] = $message;
+                return $this;
+            }
+
+            // Normalize and store the cleaned URL
+            $this->data[$field] = $cleanUrl;
+        }
+
+        return $this;
+    }
+
+    /**
      * Validate if URL matches base URL (checks if URL starts with base URL)
      * @param string $field
      * @param string $baseField
@@ -304,7 +349,7 @@ $validator = new ValidationHelper($_POST);
 $validator->required('website_url')
     ->url('website_url', 'Please enter a valid URL')
     ->required('base_url')
-    ->url('base_url')
+    ->baseUrl('base_url')
     ->matchesBaseUrl('website_url', 'base_url', 'Website URL must start with the base URL');
 
 if ($validator->passes()) {

@@ -11,6 +11,22 @@ class BacklinkUtils
     }
 
     /**
+     * Normalize URL by removing scheme (http/https) and www.
+     * @param string $url The URL to normalize.
+     * @return string The normalized URL.
+     */
+    public function normalizeUrl($url)
+    {
+        $url = strtolower(trim($url));
+
+        // Remove http://, https://, and www.
+        $url = preg_replace('/^(https?:\/\/)?(www\.)?/', '', $url);
+
+        // Remove trailing slash
+        return rtrim($url, '/');
+    }
+
+    /**
      * Extracts the base domain from a URL.
      * @param string $url The URL to process.
      * @return string|null The base domain (e.g., 'example.com') or null if invalid.
@@ -77,8 +93,8 @@ class BacklinkUtils
     /**
      * Inserts a new backlink and handles duplicate status.
      * @param int $campaignId The campaign ID.
-     * @param string $backlinkUrl The backlink URL.
-     * @param string $targetUrl The target URL.
+     * @param string $backlinkUrl The backlink URL (where the link is found).
+     * @param string $targetUrl The target URL (where the link points to).
      * @param string $anchorText The anchor text.
      * @param int $userId The ID of the user creating the backlink.
      * @return int The ID of the newly inserted backlink.
@@ -86,10 +102,14 @@ class BacklinkUtils
      */
     public function insertBacklink($campaignId, $backlinkUrl, $targetUrl, $anchorText, $userId)
     {
+        // Extract base domain from backlink_url (where the link is found)
         $baseDomain = $this->getBaseDomain($backlinkUrl);
         if ($baseDomain === null) {
             throw new Exception('Invalid backlink URL: Unable to extract domain');
         }
+
+        // Normalize target_url (where the link points to)
+        $normalizedTargetUrl = !empty($targetUrl) ? $this->normalizeUrl($targetUrl) : '';
 
         // Check for duplicate
         $existingBacklink = $this->checkForDuplicate($campaignId, $baseDomain);
@@ -104,12 +124,12 @@ class BacklinkUtils
         ");
         $stmt->execute([
             $campaignId,
-            $backlinkUrl,
-            $targetUrl,
+            $backlinkUrl,           // Store as-is (where the link is found)
+            $normalizedTargetUrl,   // Store normalized (where the link points to)
             $anchorText,
             $isDuplicate,
             $userId,
-            $baseDomain
+            $baseDomain             // Extracted from backlink_url
         ]);
 
         $newBacklinkId = $this->pdo->lastInsertId();
