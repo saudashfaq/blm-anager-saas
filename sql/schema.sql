@@ -89,7 +89,7 @@ CREATE TABLE verification_errors (
     id INT AUTO_INCREMENT PRIMARY KEY,
     backlink_id INT NOT NULL,
     proxy_key VARCHAR(255) DEFAULT NULL,
-    error_type ENUM('http', 'proxy', 'dom') NOT NULL,
+    error_type ENUM('http', 'proxy', 'dom', 'other', 'not_found', 'https') NOT NULL,
     error_message TEXT NOT NULL,
     attempt INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
