@@ -6,6 +6,18 @@
 //TODO: These plans should display on frontend dynamically
 //TODO: Depending on the Plan the client would be able to create maximum number of campaigns and backlinks
 
+/**
+ * BacklinkVerifier - Verifies the status of backlinks
+ * 
+ * This class handles two types of backlink verification:
+ * 1. Scheduled verification: Backlinks are verified based on their campaign's verification frequency
+ * 2. Immediate verification: Newly added backlinks (status='pending', last_checked=NULL) are verified 
+ *    as soon as possible, regardless of the campaign's verification schedule
+ * 
+ * New backlinks will be verified immediately when added, and then included in the regular
+ * scheduled verification cycle for subsequent checks.
+ */
+
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -60,7 +72,8 @@ class BacklinkVerifier
 
     private function fetchPendingBacklinks(): array
     {
-        $query = "
+        // First, get backlinks that are due for verification based on campaign frequency
+        $scheduledQuery = "
         SELECT b.id, b.backlink_url, b.target_url, b.anchor_text, 
                c.id AS campaign_id, c.verification_frequency, c.base_url
         FROM backlinks b
@@ -87,13 +100,54 @@ class BacklinkVerifier
           )
           AND (h.pending_backlinks IS NULL OR h.pending_backlinks > 0)
         ORDER BY b.last_checked ASC
-        LIMIT 20
+        LIMIT 10
     ";
 
-        $stmt = $this->pdo->prepare($query);
+        // Second, get newly added backlinks that haven't been verified yet (regardless of schedule)
+        $newBacklinksQuery = "
+        SELECT b.id, b.backlink_url, b.target_url, b.anchor_text, 
+               c.id AS campaign_id, c.verification_frequency, c.base_url
+        FROM backlinks b
+        INNER JOIN campaigns c ON b.campaign_id = c.id
+        INNER JOIN companies comp ON c.company_id = comp.id
+        WHERE c.status = 'enabled'
+          AND comp.status = 'active'
+          AND b.status = 'pending'
+          AND b.last_checked IS NULL
+          AND NOT EXISTS (
+              SELECT 1 FROM verification_logs vl 
+              WHERE vl.backlink_id = b.id 
+              AND DATE(vl.created_at) = CURDATE()
+          )
+        ORDER BY b.created_at ASC
+        LIMIT 10
+    ";
+
+        $stmt = $this->pdo->prepare($scheduledQuery);
         $stmt->execute();
-        $backlinks = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        error_log("Fetched " . count($backlinks) . " backlinks for verification");
+        $scheduledBacklinks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $stmt = $this->pdo->prepare($newBacklinksQuery);
+        $stmt->execute();
+        $newBacklinks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Combine both results, prioritizing new backlinks
+        $allBacklinks = array_merge($newBacklinks, $scheduledBacklinks);
+
+        // Remove duplicates based on backlink ID
+        $uniqueBacklinks = [];
+        $seenIds = [];
+        foreach ($allBacklinks as $backlink) {
+            if (!in_array($backlink['id'], $seenIds)) {
+                $uniqueBacklinks[] = $backlink;
+                $seenIds[] = $backlink['id'];
+            }
+        }
+
+        // Limit to 20 total backlinks
+        $backlinks = array_slice($uniqueBacklinks, 0, 20);
+
+        error_log("Fetched " . count($backlinks) . " backlinks for verification (" . count($newBacklinks) . " new, " . count($scheduledBacklinks) . " scheduled)");
         return $backlinks;
     }
 
@@ -279,6 +333,11 @@ class BacklinkVerifier
             $anchorFound = false;
 
             foreach ($links as $link) {
+                // Check if the link is a DOMElement before calling getAttribute
+                if (!($link instanceof DOMElement)) {
+                    continue;
+                }
+
                 $href = $link->getAttribute('href');
                 $text = preg_replace('/\s+/', ' ', trim($link->textContent));
 
@@ -433,6 +492,12 @@ class BacklinkVerifier
             try {
                 $this->pdo->beginTransaction();
 
+                // Check if this is a newly added backlink
+                $isNewBacklink = $this->isNewlyAddedBacklink($result['backlink_id']);
+                if ($isNewBacklink) {
+                    error_log("Processing newly added backlink ID: {$result['backlink_id']}");
+                }
+
                 // Only update backlink status if we have a successful verification
                 // (not null result and no error)
                 if ($result && !isset($result['error'])) {
@@ -440,10 +505,18 @@ class BacklinkVerifier
                     $this->logVerification($result);
                     $this->updateVerificationLog($result['campaign_id']);
                     $this->updateCampaignTimestamp($result['campaign_id']);
+
+                    if ($isNewBacklink) {
+                        error_log("Successfully verified newly added backlink ID: {$result['backlink_id']} - Status: " . ($result['is_active'] ? 'alive' : 'dead'));
+                    }
                 } else {
                     // Log the failed verification attempt without updating status
                     error_log("Backlink verification failed for ID {$result['backlink_id']}: " . ($result['error'] ?? 'Unknown error'));
                     $this->logError($result['backlink_id'], null, 'verification', $result['error'] ?? 'Unknown error', 1);
+
+                    if ($isNewBacklink) {
+                        error_log("Failed to verify newly added backlink ID: {$result['backlink_id']} - will retry on next scheduled run");
+                    }
                 }
 
                 $this->pdo->commit();
@@ -453,6 +526,22 @@ class BacklinkVerifier
                 echo "Error processing backlink ID {$result['backlink_id']}: " . $e->getMessage() . "\n";
             }
         }
+    }
+
+    /**
+     * Check if a backlink is newly added (has never been checked before)
+     */
+    private function isNewlyAddedBacklink(int $backlinkId): bool
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT last_checked, status 
+            FROM backlinks 
+            WHERE id = ?
+        ");
+        $stmt->execute([$backlinkId]);
+        $backlink = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $backlink && $backlink['last_checked'] === null && $backlink['status'] === 'pending';
     }
 
     private function updateBacklinkStatus(array $result): void

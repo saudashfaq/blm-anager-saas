@@ -47,19 +47,19 @@ function logMessage($message, $type = 'INFO')
 $jobs = [
     'proxy_scraper_validator' => [
         'file' => 'ProxyScraperValidator.php',
-        'interval' => 360, // minutes (6 hours)
+        'interval' => 2400, // minutes (40 hours)
         'enabled' => true,
         'description' => 'Scrapes and validates proxies'
     ],
     'backlink_verifier' => [
         'file' => 'BacklinkVerifier.php',
-        'interval' => 30, // minutes
+        'interval' => 2400, // minutes (40 hours)
         'enabled' => true,
         'description' => 'Verifies backlinks status'
     ],
     'verification_report_emailer' => [
         'file' => 'VerificationReportEmailer.php',
-        'interval' => 30, // minutes
+        'interval' => 2400, // minutes (40 hours)
         'enabled' => true,
         'description' => 'Sends verification report emails'
     ]
