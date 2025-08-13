@@ -7,7 +7,7 @@
     <title><?= isset($pageTitle) ? htmlspecialchars($pageTitle) : 'Backlink Manager' ?></title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="<?= BASE_URL ?>assets/favicon.ico">
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>images/favicon-backlinks-validator.png">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet">

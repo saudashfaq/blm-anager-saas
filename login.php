@@ -26,11 +26,7 @@ include_once __DIR__ . '/includes/header.php';
         <div class="row justify-content-center">
             <div class="col-md-5">
                 <div class="text-center mb-5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link mb-3" width="48" height="48" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
-                        <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
-                    </svg>
+                    <img src="<?= BASE_URL ?>images/logo-backlinks-validator.png" alt="Backlink Manager" height="64" class="mb-3">
                     <h1 class="h3 mb-2">Welcome Back!</h1>
                     <p class="text-muted">Please sign in to your account</p>
                 </div>

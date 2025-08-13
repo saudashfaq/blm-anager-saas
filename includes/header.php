@@ -16,6 +16,9 @@ $pageTitle = $pageTitle ?? 'Backlink Manager';
     <?php endif; ?>
     <title><?= $pageTitle ?> - Backlink Manager</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>images/favicon-backlinks-validator.png">
+
     <!-- Common CSS -->
     <!-- Always load Tabler CSS for consistent theming across the application -->
     <link href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet">

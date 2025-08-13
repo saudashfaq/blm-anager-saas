@@ -70,6 +70,10 @@ function old($field, $default = '')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Backlink Manager</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>images/favicon-backlinks-validator.png">
+
     <link href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet">
 </head>
 
@@ -79,11 +83,7 @@ function old($field, $default = '')
             <div class="row justify-content-center">
                 <div class="col-lg-8 col-md-10">
                     <div class="text-center mb-5">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link mb-3" width="48" height="48" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
-                            <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
-                        </svg>
+                        <img src="<?= BASE_URL ?>images/logo-backlinks-validator.png" alt="Backlink Manager" height="64" class="mb-3">
                         <h1 class="h2 mb-2">Create Your Account</h1>
                         <p class="text-muted">Start managing your backlinks professionally</p>
                     </div>
