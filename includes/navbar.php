@@ -5,8 +5,8 @@ require_once __DIR__ . '/../config/subscription_plans.php';
     <div class="container-fluid">
         <!-- Navbar Brand -->
         <a class="navbar-brand" href="#">
-            <img src="<?= BASE_URL ?>images/logo-backlinks-validator.png" alt="Backlink Manager" height="32" class="me-2">
-            Backlink Manager
+            <img src="<?= BASE_URL ?>images/logo-backlinks-validator.png" alt="Backlink Manager" width="80" class="me-2">
+
         </a>
 
         <!-- Toggler for mobile view -->

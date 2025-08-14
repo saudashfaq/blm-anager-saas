@@ -1,4 +1,4 @@
-# Backlinks Manager - Installation Guide
+# Backlinks Validator - Installation Guide
 
 ## Table of Contents
 

@@ -72,18 +72,19 @@ function old($field, $default = '')
     <title>Register - Backlink Manager</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="<?= BASE_URL ?>images/favicon-backlinks-validator.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= BASE_URL ?>images/favicon-backlinks-validator.png?v=1">
+
 
     <link href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet">
 </head>
 
 <body class="bg-light">
-    <div class="d-flex align-items-center min-vh-100" style="padding-top: 120px !important;">
+    <div class="d-flex align-items-center min-vh-100 bg-light py-5">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8 col-md-10">
-                    <div class="text-center mb-5">
-                        <img src="<?= BASE_URL ?>images/logo-backlinks-validator.png" alt="Backlink Manager" height="64" class="mb-3">
+                    <div class="text-center mb-5 position-relative">
+                        <div class="logo-background-container mb-3"></div>
                         <h1 class="h2 mb-2">Create Your Account</h1>
                         <p class="text-muted">Start managing your backlinks professionally</p>
                     </div>
@@ -220,6 +221,20 @@ function old($field, $default = '')
     </div>
 
     <style>
+        .logo-background-container {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            background-image: url('<?= BASE_URL ?>images/logo-backlinks-validator.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: relative;
+            margin-bottom: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
         body {
             background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
         }

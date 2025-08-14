@@ -5,8 +5,7 @@ require_once __DIR__ . '/../config/subscription_plans.php';
     <div class="container">
         <!-- Navbar Brand -->
         <a class="navbar-brand d-flex align-items-center" href="<?= BASE_URL ?>">
-            <img src="<?= BASE_URL ?>images/logo-backlinks-validator.png" alt="Backlink Manager" height="32" class="me-2">
-            <span class="fw-bold">Backlink Manager</span>
+            <img src="<?= BASE_URL ?>images/logo-backlinks-validator.png" alt="Backlinks Validator" width="80" class="me-2">
         </a>
 
         <!-- Toggler for mobile view -->

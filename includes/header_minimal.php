@@ -4,10 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= isset($pageTitle) ? htmlspecialchars($pageTitle) : 'Backlink Manager' ?></title>
+
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="<?= BASE_URL ?>images/favicon-backlinks-validator.png">
+    <link rel="icon" type="image/png" width="64" height="64" href="<?= BASE_URL ?>images/favicon-backlinks-validator.png">
+
+    <title><?= isset($pageTitle) ? htmlspecialchars($pageTitle) : 'Backlink Manager' ?></title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet">

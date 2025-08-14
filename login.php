@@ -25,8 +25,8 @@ include_once __DIR__ . '/includes/header.php';
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-5">
-                <div class="text-center mb-5">
-                    <img src="<?= BASE_URL ?>images/logo-backlinks-validator.png" alt="Backlink Manager" height="64" class="mb-3">
+                <div class="text-center mb-5 position-relative">
+                    <div class="logo-background-container mb-3"></div>
                     <h1 class="h3 mb-2">Welcome Back!</h1>
                     <p class="text-muted">Please sign in to your account</p>
                 </div>
@@ -149,6 +149,20 @@ include_once __DIR__ . '/includes/header.php';
 </div>
 
 <style>
+    .logo-background-container {
+        width: 100%;
+        height: 200px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        background-image: url('<?= BASE_URL ?>images/logo-backlinks-validator.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        position: relative;
+        margin-bottom: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
     .btn-primary {
         background: linear-gradient(135deg, #0061f2 0%, #0044c2 100%);
         border: none;
