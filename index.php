@@ -495,6 +495,7 @@ require_once __DIR__ . '/includes/public_navbar.php';
                     <span class="h4 text-white mb-0">Backlink Manager</span>
                 </div>
                 <p class="text-white-50 mb-4">Empowering businesses with smart backlink management solutions. Track, analyze, and optimize your backlink portfolio with ease.</p>
+                <!--
                 <div class="social-links">
                     <a href="#" class="btn btn-icon btn-sm btn-ghost-light rounded-circle me-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -519,6 +520,7 @@ require_once __DIR__ . '/includes/public_navbar.php';
                         </svg>
                     </a>
                 </div>
+-->
             </div>
 
             <!-- Quick Links -->
