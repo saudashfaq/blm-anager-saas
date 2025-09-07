@@ -26,7 +26,9 @@ include_once __DIR__ . '/includes/header.php';
         <div class="row justify-content-center">
             <div class="col-md-5">
                 <div class="text-center mb-5 position-relative">
-                    <div class="logo-background-container mb-3"></div>
+                    <a href="<?= BASE_URL ?>">
+                        <div class="logo-background-container mb-3"></div>
+                    </a>
                     <h1 class="h3 mb-2">Welcome Back!</h1>
                     <p class="text-muted">Please sign in to your account</p>
                 </div>

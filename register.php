@@ -84,7 +84,9 @@ function old($field, $default = '')
             <div class="row justify-content-center">
                 <div class="col-lg-8 col-md-10">
                     <div class="text-center mb-5 position-relative">
-                        <div class="logo-background-container mb-3"></div>
+                        <a href="<?= BASE_URL ?>">
+                            <div class="logo-background-container mb-3"></div>
+                        </a>
                         <h1 class="h2 mb-2">Create Your Account</h1>
                         <p class="text-muted">Start managing your backlinks professionally</p>
                     </div>
