@@ -548,6 +548,8 @@ require_once __DIR__ . '/includes/public_navbar.php';
                 <p class="text-white-50 mb-4">Subscribe to our newsletter for the latest updates and SEO insights.</p>
                 <form class="mb-3">
                     <div class="input-group">
+                        <!-- TODO: Add subscribe button -->
+                        We will enable this feature soon.
                         <input type="email" class="form-control" placeholder="Enter your email" aria-label="Enter your email">
                         <button class="btn btn-primary" type="submit">Subscribe</button>
                     </div>
