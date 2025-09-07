@@ -29,7 +29,7 @@ $displayablePlans = array_filter(SUBSCRIPTION_LIMITS, function ($plan) {
     return $plan['display'] ?? false;
 });
 
-$pageTitle = 'Backlink Manager - Professional Backlink Management Solution';
+$pageTitle = 'Backlinks Validator - Professional Backlink Management Solution';
 
 // Use a minimal header without the default navbar
 require_once __DIR__ . '/includes/header_minimal.php';
@@ -99,7 +99,7 @@ require_once __DIR__ . '/includes/public_navbar.php';
                 <div class="position-relative">
                     <!-- Main Dashboard Image -->
                     <div class="dashboard-preview">
-                        <img src="<?= BASE_URL ?>assets/images/dashboard-preview.png" alt="Backlink Manager Dashboard" class="img-fluid rounded-4 shadow-lg">
+                        <img src="<?= BASE_URL ?>assets/images/dashboard-preview.png" alt="Backlinks Validator Dashboard" class="img-fluid rounded-4 shadow-lg">
                     </div>
 
                     <!-- Floating Elements -->
@@ -358,7 +358,7 @@ require_once __DIR__ . '/includes/public_navbar.php';
                                 </svg>
                             </div>
                             <h3 class="h4 mb-3">Everything You Need to Succeed</h3>
-                            <p class="text-muted mb-0">Access all premium features to supercharge your backlink management</p>
+                            <p class="text-muted mb-0">Access all premium features to supercharge your backlinks validation & management</p>
                         </div>
 
                         <div class="row g-4 mb-4">
@@ -383,7 +383,7 @@ require_once __DIR__ . '/includes/public_navbar.php';
                                         </svg>
                                     </div>
                                     <div>
-                                        <h4 class="h6 mb-1">Comprehensive Backlink Tracking</h4>
+                                        <h4 class="h6 mb-1">Comprehensive Backlinks Validation & Tracking</h4>
                                         <p class="text-muted small mb-0">Monitor your entire link portfolio with ease</p>
                                     </div>
                                 </div>
@@ -464,7 +464,7 @@ require_once __DIR__ . '/includes/public_navbar.php';
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
-                <h2 class="display-5 fw-bold mb-4">Ready to Optimize Your Backlink Strategy?</h2>
+                <h2 class="display-5 fw-bold mb-4">Ready to Optimize Your Backlinks Strategy?</h2>
                 <p class="lead text-muted mb-4">Join thousands of satisfied customers who trust our platform for their SEO success.</p>
                 <a href="register.php" class="btn btn-primary btn-lg">
                     Start Free Forever
@@ -492,7 +492,7 @@ require_once __DIR__ . '/includes/public_navbar.php';
                         <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
                         <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
                     </svg>
-                    <span class="h4 text-white mb-0">Backlink Manager</span>
+                    <span class="h4 text-white mb-0">Backlinks Validator</span>
                 </div>
                 <p class="text-white-50 mb-4">Empowering businesses with smart backlink management solutions. Track, analyze, and optimize your backlink portfolio with ease.</p>
                 <!--
@@ -564,7 +564,7 @@ require_once __DIR__ . '/includes/public_navbar.php';
         <div class="container">
             <div class="row py-4">
                 <div class="col-md-6 text-center text-md-start">
-                    <p class="text-white-50 mb-0">&copy; <?= date('Y') ?> Backlink Manager. All rights reserved.</p>
+                    <p class="text-white-50 mb-0">&copy; <?= date('Y') ?> Backlinks Validator. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
                     <ul class="list-inline mb-0">

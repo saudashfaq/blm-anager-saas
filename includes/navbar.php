@@ -4,7 +4,7 @@ require_once __DIR__ . '/../config/subscription_plans.php';
 <nav class="navbar navbar-expand navbar-light">
     <div class="container-fluid">
         <!-- Navbar Brand -->
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="<?= BASE_URL ?>">
             <img src="<?= BASE_URL ?>images/logo-backlinks-validator.png" alt="Backlink Manager" width="80" class="me-2">
 
         </a>
