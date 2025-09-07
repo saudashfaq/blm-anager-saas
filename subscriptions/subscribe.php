@@ -202,15 +202,17 @@ if (isset($_GET['success']) && isset($_GET['session_id'])) {
 
             if ($verificationResult) {
                 try {
-                    // Get subscription details
-                    $subscriptionDetails = $stripeManager->getSubscriptionDetails($_GET['session_id']);
-
                     // Create success message
                     $successMessage = "<div class='alert alert-success'>
-                        <h4 class='alert-heading'>Subscription Activated Successfully!</h4>
-                        <p>Your subscription has been activated. You can now access all features of your plan.</p>
-                        <p><a href='/dashboard.php' class='btn btn-primary mt-3'>Go to Dashboard</a></p>
+                        <h4 class='alert-heading mb-3'>Subscription Activated Successfully!</h4>
+                        <p class='mb-3'>Your subscription has been activated. You can now access all features of your plan.</p>
+                        <div class='mt-3'>
+                            <a href='<?php echo BASE_URL ?>/dashboard.php' class='btn btn-primary'>Go to Dashboard</a>
+                        </div>
                     </div>";
+
+                    // Get subscription details
+                    $subscriptionDetails = $stripeManager->getSubscriptionDetails($_GET['session_id']);
                 } catch (Exception $e) {
                     error_log("Error processing subscription: " . $e->getMessage());
                     throw new Exception("Failed to process subscription: " . $e->getMessage());
@@ -276,6 +278,15 @@ if (isset($_GET['cancel'])) {
             <?php if (isset($error)): ?>
                 <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
             <?php endif; ?>
+
+            <?php
+            // Display success or error message
+            if (isset($successMessage)) {
+                echo $successMessage;
+            } elseif (isset($errorMessage)) {
+                echo $errorMessage;
+            }
+            ?>
 
             <!-- Display plans -->
             <div class="row row-cards">
@@ -384,15 +395,6 @@ if (isset($_GET['cancel'])) {
                     </div>
                 <?php endforeach; ?>
             </div>
-
-            <?php
-            // Display success or error message
-            if (isset($successMessage)) {
-                echo $successMessage;
-            } elseif (isset($errorMessage)) {
-                echo $errorMessage;
-            }
-            ?>
         </div>
     </div>
 </div>

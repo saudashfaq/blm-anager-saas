@@ -135,7 +135,7 @@ function old($field, $default = '')
 
                                 <form method="POST" action="" class="needs-validation" novalidate>
                                     <div class="mb-4">
-                                        <h3 class="card-title mb-3">Company Information</h3>
+                                        <h2 class="card-title mb-3">Company Information</h2>
                                         <div class="row g-3">
                                             <div class="col-12">
                                                 <label class="form-label">Company Name</label>
@@ -153,7 +153,7 @@ function old($field, $default = '')
                                     </div>
 
                                     <div class="mb-4">
-                                        <h3 class="card-title mb-3">Admin Account</h3>
+                                        <h2 class="card-title mb-3">Admin Account</h2>
                                         <div class="row g-3">
                                             <div class="col-12">
                                                 <label class="form-label">Username</label>
