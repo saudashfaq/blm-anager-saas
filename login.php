@@ -82,6 +82,13 @@ include_once __DIR__ . '/includes/header.php';
                                 <div class="input-group">
                                     <input type="password" class="form-control form-control-lg" id="password" name="password" required
                                         placeholder="Enter your password">
+                                    <button type="button" class="btn btn-outline-secondary" id="togglePassword" style="border-left: 0;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                            <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
+                                        </svg>
+                                    </button>
                                     <div class="invalid-feedback">Please enter your password.</div>
                                 </div>
                             </div>
@@ -197,47 +204,105 @@ include_once __DIR__ . '/includes/header.php';
     .bg-light {
         background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
     }
+
+    /* Password toggle button styles */
+    #togglePassword {
+        border-color: #e0e5ec;
+        background-color: #fff;
+        transition: all 0.2s ease-in-out;
+    }
+
+    #togglePassword:hover {
+        background-color: #f8f9fa;
+        border-color: #d0d7de;
+    }
+
+    #togglePassword:focus {
+        box-shadow: 0 0 0 0.25rem rgba(0, 97, 242, 0.1);
+        border-color: #0061f2;
+    }
+
+    .input-group .form-control:focus {
+        z-index: 3;
+    }
+
+    .input-group .btn:focus {
+        z-index: 4;
+    }
 </style>
 
 <script>
-    document.getElementById('login-form').addEventListener('submit', function(e) {
-        e.preventDefault();
+    document.addEventListener('DOMContentLoaded', function() {
+        // Password visibility toggle functionality
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
 
-        const formData = new FormData(this);
-        const errorDiv = document.getElementById('error-messages');
-        const submitButton = this.querySelector('button[type="submit"]');
+        if (togglePassword && passwordInput) {
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
 
-        // Disable submit button and show loading state
-        submitButton.disabled = true;
-        submitButton.innerHTML = 'Logging in...';
-
-        fetch('process_login.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Redirect on success
-                    window.location.href = data.redirect;
+                // Toggle the eye icon
+                const eyeIcon = togglePassword.querySelector('svg');
+                if (type === 'text') {
+                    // Show eye-off icon when password is visible
+                    eyeIcon.innerHTML = `
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M10.585 10.587a2 2 0 0 0 2.829 2.828"/>
+                        <path d="M16.681 16.673a8.717 8.717 0 0 1 -4.681 1.327c-3.6 0 -6.6 -2 -9 -6c1.272 -2.12 2.712 -3.678 4.32 -4.674m2.86 -1.146a9.055 9.055 0 0 1 1.82 -.18c3.6 0 6.6 2 9 6c-.666 1.11 -1.379 2.067 -2.138 2.87"/>
+                        <path d="M3 3l18 18"/>
+                    `;
                 } else {
-                    // Show error message
+                    // Show eye icon when password is hidden
+                    eyeIcon.innerHTML = `
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"/>
+                        <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"/>
+                    `;
+                }
+            });
+        }
+
+        // Login form submission
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const errorDiv = document.getElementById('error-messages');
+            const submitButton = this.querySelector('button[type="submit"]');
+
+            // Disable submit button and show loading state
+            submitButton.disabled = true;
+            submitButton.innerHTML = 'Logging in...';
+
+            fetch('process_login.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Redirect on success
+                        window.location.href = data.redirect;
+                    } else {
+                        // Show error message
+                        errorDiv.style.display = 'block';
+                        errorDiv.innerHTML = `<p>${data.message}</p>`;
+
+                        // Re-enable submit button
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = 'Login';
+                    }
+                })
+                .catch(error => {
                     errorDiv.style.display = 'block';
-                    errorDiv.innerHTML = `<p>${data.message}</p>`;
+                    errorDiv.innerHTML = '<p>An error occurred. Please try again.</p>';
 
                     // Re-enable submit button
                     submitButton.disabled = false;
                     submitButton.innerHTML = 'Login';
-                }
-            })
-            .catch(error => {
-                errorDiv.style.display = 'block';
-                errorDiv.innerHTML = '<p>An error occurred. Please try again.</p>';
-
-                // Re-enable submit button
-                submitButton.disabled = false;
-                submitButton.innerHTML = 'Login';
-            });
+                });
+        });
     });
 </script>
 
