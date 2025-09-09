@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Handle individual checkbox changes
+    // Handle individual checkbox changes (change + click for robustness)
     document.addEventListener('change', function(e) {
         if (e.target && e.target.classList.contains('backlink-select')) {
             updateBulkDeleteButton();
@@ -70,6 +70,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.classList && e.target.classList.contains('backlink-select')) {
+            updateBulkDeleteButton();
+        }
+    });
+
     // Update bulk delete button state
     function updateBulkDeleteButton() {
         const selectedCheckboxes = document.querySelectorAll('.backlink-select:checked');
@@ -77,6 +83,9 @@ document.addEventListener('DOMContentLoaded', function() {
             bulkDeleteBtn.disabled = selectedCheckboxes.length === 0;
         }
     }
+
+    // Initialize button state on load
+    updateBulkDeleteButton();
 
     // Handle bulk delete
     if (bulkDeleteBtn) {
