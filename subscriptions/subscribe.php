@@ -197,6 +197,13 @@ if (isset($_GET['success']) && isset($_GET['session_id'])) {
                 <p>Your subscription has already been activated.</p>
                 <p><a href='/dashboard.php' class='btn btn-primary mt-3'>Go to Dashboard</a></p>
             </div>";
+            // Ensure session subscription data is up-to-date from DB
+            try {
+                $sessionManager = new SubscriptionSessionManager($pdo);
+                $sessionManager->loadSubscriptionData($_SESSION['company_id']);
+            } catch (Exception $e) {
+                error_log('Failed to refresh subscription session (already processed): ' . $e->getMessage());
+            }
         } else {
             $verificationResult = $verifier->verifySubscription($_GET['session_id'], $_SESSION['company_id']);
 
@@ -211,8 +218,15 @@ if (isset($_GET['success']) && isset($_GET['session_id'])) {
                         </div>
                     </div>";
 
-                    // Get subscription details
+                    // Get subscription details and update session immediately
                     $subscriptionDetails = $stripeManager->getSubscriptionDetails($_GET['session_id']);
+                    try {
+                        $sessionManager = new SubscriptionSessionManager($pdo);
+                        // Update $_SESSION['subscription'] from Stripe details
+                        $sessionManager->storeNewSubscription($subscriptionDetails);
+                    } catch (Exception $e) {
+                        error_log('Failed to update subscription session after success: ' . $e->getMessage());
+                    }
                 } catch (Exception $e) {
                     error_log("Error processing subscription: " . $e->getMessage());
                     throw new Exception("Failed to process subscription: " . $e->getMessage());
