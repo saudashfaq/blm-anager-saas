@@ -26,7 +26,7 @@ class SubscriptionLimitChecker
 
         if ($maxCampaigns !== -1 && $currentCount >= $maxCampaigns) {
             throw new Exception(
-                "Campaign limit reached. Your current plan ({$this->subscription['plan_name']}) allows a maximum of {$maxCampaigns} campaigns. You can upgrade your plan to increase the limit here: " . BASE_URL . "subscriptions/subscribe.php"
+                "Upgrade your plan to add more campaigns. Your current plan ({$this->subscription['plan_name']}) allows a maximum of {$maxCampaigns} campaigns.  <a href='" . BASE_URL . "subscriptions/subscribe.php'>Upgrade</a>"
             );
         }
     }
