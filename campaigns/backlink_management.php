@@ -43,6 +43,7 @@ try {
     $totalBacklinks = $result['total_backlinks'];
     $activeBacklinks = $result['alive_backlinks'];
     $deadBacklinks = $result['dead_backlinks'];
+    $pendingBacklinks = $result['pending_backlinks'];
     $duplicateBacklinks = $result['duplicate_backlinks'];
 
     // Pagination setup
@@ -137,6 +138,16 @@ include_once __DIR__ . '/../includes/header.php';
                                 <path d="M15 4h5v5" />
                             </svg>
                         </a>
+                    </div>
+                    <!-- Campaign summary stats -->
+                    <div class="mt-2">
+                        <div class="d-flex align-items-center flex-wrap gap-2">
+                            <span class="badge bg-primary-lt me-2">Total: <?= (int)$totalBacklinks ?></span>
+                            <span class="badge bg-green-lt me-2">Alive: <?= (int)$activeBacklinks ?></span>
+                            <span class="badge bg-yellow-lt me-2">Pending: <?= (int)$pendingBacklinks ?></span>
+                            <span class="badge bg-red-lt me-2">Dead: <?= (int)$deadBacklinks ?></span>
+                            <span class="badge bg-orange-lt">Duplicate: <?= (int)$duplicateBacklinks ?></span>
+                        </div>
                     </div>
                 </div>
                 <div class="col-auto ms-auto d-print-none">
@@ -349,7 +360,7 @@ include_once __DIR__ . '/../includes/header.php';
                                     <td><input type="checkbox" class="backlink-select" value="<?= htmlspecialchars($backlink['id']) ?>"></td>
                                     <td>
                                         <?php if ($backlink['is_duplicate'] === 'yes'): ?>
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy duplicate-icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy duplicate-icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" data-bs-toggle="tooltip" title="Duplicate backlink">
                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                 <path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" />
                                                 <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />
