@@ -12,11 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const deleteBacklinkButtons = document.querySelectorAll('[data-action="delete-backlink"]');
     const campaignSelector = document.getElementById('campaign-selector');
     
-    // Initialize tooltips
-    const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    if (tooltips.length) {
-        const tooltipList = [...tooltips].map(tooltipEl => new bootstrap.Tooltip(tooltipEl));
-    }
+    // Tooltips: rely on native browser title attribute; no external library needed
     
     // Handle campaign selection change
     if (campaignSelector) {
@@ -76,11 +72,31 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Also respond to input events (covers some browsers/assistive tech)
+    document.addEventListener('input', function(e) {
+        if (e.target && e.target.classList && e.target.classList.contains('backlink-select')) {
+            updateBulkDeleteButton();
+        }
+    });
+
+    // Attach direct listeners as a fallback (in case delegation is blocked)
+    const rowCheckboxes = document.querySelectorAll('.backlink-select');
+    rowCheckboxes.forEach(cb => {
+        cb.addEventListener('change', updateBulkDeleteButton);
+        cb.addEventListener('click', updateBulkDeleteButton);
+    });
+
     // Update bulk delete button state
     function updateBulkDeleteButton() {
         const selectedCheckboxes = document.querySelectorAll('.backlink-select:checked');
         if (bulkDeleteBtn) {
-            bulkDeleteBtn.disabled = selectedCheckboxes.length === 0;
+            const shouldDisable = selectedCheckboxes.length === 0;
+            bulkDeleteBtn.disabled = shouldDisable;
+            if (shouldDisable) {
+                bulkDeleteBtn.setAttribute('disabled', 'disabled');
+            } else {
+                bulkDeleteBtn.removeAttribute('disabled');
+            }
         }
     }
 
