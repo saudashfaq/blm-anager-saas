@@ -87,6 +87,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
 
+            // Normalize base_url by removing a trailing slash before validation
+            if (isset($_POST['base_url'])) {
+                $_POST['base_url'] = rtrim(trim($_POST['base_url']), '/');
+            }
+
             $validator = new ValidationHelper($_POST);
             $validator
                 ->required('campaign_name', 'Campaign name is required')

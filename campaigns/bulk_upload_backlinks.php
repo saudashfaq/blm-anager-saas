@@ -43,6 +43,7 @@ $campaignBaseDomain = $campaign['base_url'];
 
 $errors = [];
 $successMessage = '';
+$successClass = 'success';
 $processedRows = 0;
 $failedRows = 0;
 
@@ -164,9 +165,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $pdo->commit();
-            $successMessage = "Processed $processedRows backlinks successfully.";
-            if ($failedRows > 0) {
-                $successMessage .= " $failedRows rows failed to process (invalid URL, missing backlink_url, or target_url base domain mismatch).";
+            if ($processedRows === 0) {
+                // Treat as an error when nothing was processed
+                $errors[] = 'No backlinks were processed. Please check your file or input format.';
+            } else {
+                // Partial or full success
+                $successClass = ($failedRows > 0) ? 'warning' : 'success';
+                $successMessage = "Processed $processedRows backlinks successfully.";
+                if ($failedRows > 0) {
+                    $successMessage .= " $failedRows rows failed to process (invalid URL, missing backlink_url, or target_url base domain mismatch).";
+                }
             }
         } catch (Exception $e) {
             $pdo->rollBack();
@@ -223,7 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?php endif; ?>
 
                     <?php if ($successMessage): ?>
-                        <div class="alert alert-success">
+                        <div class="alert alert-<?= htmlspecialchars($successClass) ?>">
                             <p class="mb-0"><?= htmlspecialchars($successMessage) ?></p>
                         </div>
                     <?php endif; ?>
