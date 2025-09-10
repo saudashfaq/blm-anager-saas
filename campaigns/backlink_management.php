@@ -54,6 +54,21 @@ try {
     $filterType = isset($_GET['filter_type']) ? $_GET['filter_type'] : null;
     $filterValue = isset($_GET['filter_value']) ? $_GET['filter_value'] : null;
 
+    // Handle sorting
+    $sortColumn = isset($_GET['sort']) ? $_GET['sort'] : 'created_at';
+    $sortDirection = isset($_GET['dir']) ? $_GET['dir'] : 'desc';
+
+    // Validate sort column and direction
+    $allowedColumns = ['backlink_url', 'anchor_text', 'target_url', 'status', 'created_at'];
+    $allowedDirections = ['asc', 'desc'];
+
+    if (!in_array($sortColumn, $allowedColumns)) {
+        $sortColumn = 'created_at';
+    }
+    if (!in_array($sortDirection, $allowedDirections)) {
+        $sortDirection = 'desc';
+    }
+
     // Get total number of backlinks for the campaign (considering filters)
     $countQuery = "SELECT COUNT(*) FROM backlinks WHERE campaign_id = :campaign_id";
     $countParams = ['campaign_id' => $campaignId];
@@ -86,7 +101,7 @@ try {
         $backlinkQuery .= " AND b.is_duplicate = :is_duplicate";
         $params['is_duplicate'] = 'yes';
     }
-    $backlinkQuery .= " ORDER BY b.created_at DESC LIMIT :limit OFFSET :offset";
+    $backlinkQuery .= " ORDER BY b.{$sortColumn} {$sortDirection} LIMIT :limit OFFSET :offset";
 
     $stmt = $pdo->prepare($backlinkQuery);
     $stmt->bindValue(':campaign_id', $campaignId, PDO::PARAM_INT);
@@ -297,52 +312,92 @@ include_once __DIR__ . '/../includes/header.php';
                         <thead>
                             <tr>
                                 <th><input type="checkbox" id="select-all"></th>
-                                <th>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
-                                        <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
-                                    </svg>
-                                    Backlink
+                                <th class="sortable" data-sort="backlink_url">
+                                    <a href="?campaign_id=<?= $campaignId ?>&sort=backlink_url&dir=<?= ($sortColumn === 'backlink_url' && $sortDirection === 'asc') ? 'desc' : 'asc' ?><?= $filterType ? '&filter_type=' . $filterType . '&filter_value=' . $filterValue : '' ?>" class="text-reset text-decoration-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+                                            <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+                                        </svg>
+                                        Backlink
+                                        <?php if ($sortColumn === 'backlink_url'): ?>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-<?= $sortDirection === 'asc' ? 'up' : 'down' ?> ms-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M7 14l5 -5l5 5" />
+                                            </svg>
+                                        <?php endif; ?>
+                                    </a>
                                 </th>
-                                <th>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-anchor me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M12 21v-9m-3 0h6m-6 0a2 2 0 1 1 -4 0a2 2 0 1 1 4 0" />
-                                        <path d="M4 8v-2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v2" />
-                                        <path d="M4 16l8 5l8 -5" />
-                                    </svg>
-                                    Anchor
+                                <th class="sortable" data-sort="anchor_text">
+                                    <a href="?campaign_id=<?= $campaignId ?>&sort=anchor_text&dir=<?= ($sortColumn === 'anchor_text' && $sortDirection === 'asc') ? 'desc' : 'asc' ?><?= $filterType ? '&filter_type=' . $filterType . '&filter_value=' . $filterValue : '' ?>" class="text-reset text-decoration-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-anchor me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M12 21v-9m-3 0h6m-6 0a2 2 0 1 1 -4 0a2 2 0 1 1 4 0" />
+                                            <path d="M4 8v-2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v2" />
+                                            <path d="M4 16l8 5l8 -5" />
+                                        </svg>
+                                        Anchor
+                                        <?php if ($sortColumn === 'anchor_text'): ?>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-<?= $sortDirection === 'asc' ? 'up' : 'down' ?> ms-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M7 14l5 -5l5 5" />
+                                            </svg>
+                                        <?php endif; ?>
+                                    </a>
                                 </th>
-                                <th>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-target me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <circle cx="12" cy="12" r="9" />
-                                        <circle cx="12" cy="12" r="6" />
-                                        <circle cx="12" cy="12" r="3" />
-                                        <path d="M12 3v18" />
-                                        <path d="M3 12h18" />
-                                    </svg>
-                                    ReferringLink
+                                <th class="sortable" data-sort="target_url">
+                                    <a href="?campaign_id=<?= $campaignId ?>&sort=target_url&dir=<?= ($sortColumn === 'target_url' && $sortDirection === 'asc') ? 'desc' : 'asc' ?><?= $filterType ? '&filter_type=' . $filterType . '&filter_value=' . $filterValue : '' ?>" class="text-reset text-decoration-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-target me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <circle cx="12" cy="12" r="9" />
+                                            <circle cx="12" cy="12" r="6" />
+                                            <circle cx="12" cy="12" r="3" />
+                                            <path d="M12 3v18" />
+                                            <path d="M3 12h18" />
+                                        </svg>
+                                        ReferringLink
+                                        <?php if ($sortColumn === 'target_url'): ?>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-<?= $sortDirection === 'asc' ? 'up' : 'down' ?> ms-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M7 14l5 -5l5 5" />
+                                            </svg>
+                                        <?php endif; ?>
+                                    </a>
                                 </th>
-                                <th>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-status-change me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M6 18m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                                        <path d="M18 6m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                                        <path d="M6 16v-4a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v4" />
-                                        <path d="M6 8v-2" />
-                                        <path d="M18 16v2" />
-                                    </svg>
-                                    Status
+                                <th class="sortable" data-sort="status">
+                                    <a href="?campaign_id=<?= $campaignId ?>&sort=status&dir=<?= ($sortColumn === 'status' && $sortDirection === 'asc') ? 'desc' : 'asc' ?><?= $filterType ? '&filter_type=' . $filterType . '&filter_value=' . $filterValue : '' ?>" class="text-reset text-decoration-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-status-change me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M6 18m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                            <path d="M18 6m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                            <path d="M6 16v-4a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v4" />
+                                            <path d="M6 8v-2" />
+                                            <path d="M18 16v2" />
+                                        </svg>
+                                        Status
+                                        <?php if ($sortColumn === 'status'): ?>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-<?= $sortDirection === 'asc' ? 'up' : 'down' ?> ms-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M7 14l5 -5l5 5" />
+                                            </svg>
+                                        <?php endif; ?>
+                                    </a>
                                 </th>
-                                <th>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <circle cx="12" cy="12" r="9" />
-                                        <path d="M12 7v5l3 3" />
-                                    </svg>
-                                    Created At
+                                <th class="sortable" data-sort="created_at">
+                                    <a href="?campaign_id=<?= $campaignId ?>&sort=created_at&dir=<?= ($sortColumn === 'created_at' && $sortDirection === 'asc') ? 'desc' : 'asc' ?><?= $filterType ? '&filter_type=' . $filterType . '&filter_value=' . $filterValue : '' ?>" class="text-reset text-decoration-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <circle cx="12" cy="12" r="9" />
+                                            <path d="M12 7v5l3 3" />
+                                        </svg>
+                                        Created At
+                                        <?php if ($sortColumn === 'created_at'): ?>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-<?= $sortDirection === 'asc' ? 'up' : 'down' ?> ms-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M7 14l5 -5l5 5" />
+                                            </svg>
+                                        <?php endif; ?>
+                                    </a>
                                 </th>
                                 <th>
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-settings me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -375,7 +430,12 @@ include_once __DIR__ . '/../includes/header.php';
                                                                     'dead' => 'danger',
                                                                     default => 'warning'
                                                                 } ?>"><?= htmlspecialchars($backlink['status']) ?></span></td>
-                                    <td><?= date('Y-m-d H:i', strtotime($backlink['created_at'])) ?></td>
+                                    <td>
+                                        <?php $createdTs = strtotime($backlink['created_at']); ?>
+                                        <time datetime="<?= htmlspecialchars(date('c', $createdTs)) ?>" title="<?= htmlspecialchars(date('Y-m-d H:i:s', $createdTs)) ?>">
+                                            <?= htmlspecialchars(date('M d, Y h:i A', $createdTs)) ?>
+                                        </time>
+                                    </td>
                                     <td>
                                         <button type="button" class="btn btn-sm btn-danger delete-single" data-id="<?= htmlspecialchars($backlink['id']) ?>">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">

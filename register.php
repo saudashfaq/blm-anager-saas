@@ -44,12 +44,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ->regex('password', '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/', 'Password must contain at least one uppercase letter, one lowercase letter, and one number');
 
     if ($validator->passes()) {
-        $result = registerUser($_POST);
-        if ($result['success']) {
-            $success = true;
-            $old = []; // Clear old values on success
-        } else {
-            $errors[] = $result['error'];
+        // Block disposable/fake emails for non-Google registrations
+        if (!empty($_POST['email']) && isDisposableEmail($_POST['email'])) {
+            $errors['email'] = 'Please use a valid, non-disposable email address';
+        }
+
+        if (!empty($_POST['company_email']) && isDisposableEmail($_POST['company_email'])) {
+            $errors['company_email'] = 'Please use a valid, non-disposable company email address';
+        }
+
+        if (empty($errors)) {
+            $result = registerUser($_POST);
+            if ($result['success']) {
+                $success = true;
+                $old = []; // Clear old values on success
+            } else {
+                $errors[] = $result['error'];
+            }
         }
     } else {
         $errors = $validator->getErrors();

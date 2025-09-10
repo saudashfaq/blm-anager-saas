@@ -131,3 +131,37 @@ function registerUser($userData)
         ];
     }
 }
+
+/**
+ * Check if an email is from a disposable provider or invalid domain
+ */
+function isDisposableEmail($email)
+{
+    require_once __DIR__ . '/../config/disposable_domains.php';
+
+    // Basic format check (should be ensured by validator already)
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return true;
+    }
+
+    $domain = strtolower(substr(strrchr($email, '@'), 1));
+    if ($domain === '' || $domain === false) {
+        return true;
+    }
+
+    // Direct disposable domain match
+    if (in_array($domain, DISPOSABLE_DOMAINS, true)) {
+        return true;
+    }
+
+    // MX record check to avoid obviously fake domains
+    // Suppress warnings in case DNS lookups fail
+    if (!@checkdnsrr($domain, 'MX')) {
+        // As a fallback, also allow if A record exists (some providers accept mail on A records)
+        if (!@checkdnsrr($domain, 'A')) {
+            return true;
+        }
+    }
+
+    return false;
+}

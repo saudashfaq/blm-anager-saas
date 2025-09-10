@@ -12,8 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const deleteBacklinkButtons = document.querySelectorAll('[data-action="delete-backlink"]');
     const campaignSelector = document.getElementById('campaign-selector');
     
-    // Tooltips: rely on native browser title attribute; no external library needed
-    
     // Handle campaign selection change
     if (campaignSelector) {
         campaignSelector.addEventListener('change', function() {
