@@ -125,6 +125,10 @@ require_once __DIR__ . '/../config/subscription_plans.php';
     @media (max-width: 991.98px) {
         .navbar-collapse {
             padding: 1rem 0;
+            background: rgba(255, 255, 255, 0.98);
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
         }
 
         .d-flex.gap-2 {
@@ -145,6 +149,20 @@ require_once __DIR__ . '/../config/subscription_plans.php';
         #scrollToTop svg {
             width: 18px;
             height: 18px;
+        }
+
+        /* Ensure link contrast on mobile */
+        .navbar .nav-link {
+            color: #0b1437;
+        }
+
+        .navbar .btn-outline-primary {
+            color: #0b1437;
+            border-color: #0b1437;
+        }
+
+        .navbar .btn-primary {
+            color: #fff;
         }
     }
 </style>

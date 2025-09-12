@@ -1,5 +1,4 @@
 <?php
-echo 'on index page<br>';
 require_once __DIR__ . '/config/auth.php';
 //die('on index page');
 require_once __DIR__ . '/config/subscription_plans.php';
@@ -38,6 +37,10 @@ require_once __DIR__ . '/includes/header_minimal.php';
 require_once __DIR__ . '/includes/public_navbar.php';
 ?>
 
+<!-- Preload key hero image for faster paint
+<link rel="preload" as="image" href="<?= '' //BASE_URL 
+                                        ?>assets/images/dashboard-preview.png" imagesizes="(max-width: 768px) 100vw, 50vw">
+ -->
 <!-- Hero Section -->
 <div class="hero position-relative overflow-hidden">
     <!-- Background Pattern -->
@@ -99,7 +102,7 @@ require_once __DIR__ . '/includes/public_navbar.php';
                 <div class="position-relative">
                     <!-- Main Dashboard Image -->
                     <div class="dashboard-preview">
-                        <img src="<?= BASE_URL ?>assets/images/dashboard-preview.png" alt="Backlinks Validator Dashboard" class="img-fluid rounded-4 shadow-lg">
+                        <img src="<?= BASE_URL ?>assets/images/dashboard-preview.png" alt="Backlinks Validator Dashboard" class="img-fluid rounded-4 shadow-hero" decoding="async" fetchpriority="high">
                     </div>
 
                     <!-- Floating Elements -->
@@ -582,9 +585,22 @@ require_once __DIR__ . '/includes/public_navbar.php';
 </footer>
 
 <style>
+    :root {
+        --hero-start: #0b1437;
+        --hero-end: #142a6d;
+        --accent-1: #ffd166;
+        /* bright neutral (warm) */
+        --accent-2: #a8dadc;
+        /* bright neutral (cool) */
+        --accent-3: #f1faee;
+        /* light neutral */
+        --card-bg: #ffffff;
+        --text-on-hero: #ffffff;
+    }
+
     /* Hero Section Styles */
     .hero {
-        background-color: #0B1437;
+        background: linear-gradient(135deg, var(--hero-start) 0%, var(--hero-end) 100%);
         overflow: hidden;
         position: relative;
         padding-top: 120px;
@@ -592,9 +608,6 @@ require_once __DIR__ . '/includes/public_navbar.php';
     }
 
     .hero-gradient {
-        background: linear-gradient(135deg,
-                rgba(13, 22, 60, 0.85) 0%,
-                rgba(11, 20, 55, 0.75) 100%);
         z-index: 1;
     }
 
@@ -608,7 +621,7 @@ require_once __DIR__ . '/includes/public_navbar.php';
     }
 
     .hero-title {
-        font-size: 3.5rem;
+        font-size: clamp(2rem, 3.5vw + 1rem, 3.5rem);
         line-height: 1.2;
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
         position: relative;
@@ -662,7 +675,7 @@ require_once __DIR__ . '/includes/public_navbar.php';
 
     /* Button Enhancements */
     .btn-warning {
-        background: linear-gradient(135deg, #FFB017 0%, #FF9900 100%);
+        background: linear-gradient(135deg, var(--accent-1) 0%, #ffb703 100%);
         border: none;
         color: #000;
         font-weight: 600;
@@ -689,7 +702,7 @@ require_once __DIR__ . '/includes/public_navbar.php';
         backdrop-filter: blur(4px);
         padding: 0.5rem;
         border-radius: 0.5rem;
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.07);
     }
 
     .text-white-75 .h4 {
@@ -737,7 +750,7 @@ require_once __DIR__ . '/includes/public_navbar.php';
 
     /* Footer Styles */
     .footer {
-        background-color: #0B1437;
+        background-color: var(--hero-start);
         position: relative;
     }
 
@@ -803,18 +816,43 @@ require_once __DIR__ . '/includes/public_navbar.php';
     html {
         scroll-behavior: smooth;
     }
+
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+        .floating-card {
+            animation: none;
+        }
+
+        .btn-primary:hover,
+        .btn-warning:hover,
+        .btn-outline-light:hover {
+            transform: none;
+        }
+
+        .hero-title,
+        .text-white-75 {
+            text-shadow: none;
+        }
+    }
+
+    /* Elevation optimization */
+    .shadow-hero {
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    }
 </style>
 
 <!-- Add AOS Library for animations -->
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        AOS.init({
-            duration: 1000,
-            once: true,
-            offset: 100
-        });
+    window.addEventListener('load', function() {
+        if (window.AOS) {
+            AOS.init({
+                duration: 800,
+                once: true,
+                offset: 80
+            });
+        }
     });
 </script>
 

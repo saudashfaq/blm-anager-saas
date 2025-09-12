@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit098df6a481c33e7a53aa0edd49960047
+class ComposerStaticInit5807f3d7fa8f34d3d85955863d1b8d12
 {
     public static $files = array (
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
@@ -19,15 +19,40 @@ class ComposerStaticInit098df6a481c33e7a53aa0edd49960047
         'p' => 
         array (
             'phpseclib3\\' => 11,
+            'phpDocumentor\\Reflection\\' => 25,
+        ),
+        'W' => 
+        array (
+            'Webmozart\\Assert\\' => 17,
+        ),
+        'S' => 
+        array (
+            'Symfony\\Component\\Finder\\' => 25,
+        ),
+        'R' => 
+        array (
+            'React\\Stream\\' => 13,
+            'React\\EventLoop\\' => 16,
         ),
         'P' => 
         array (
+            'Psr\\SimpleCache\\' => 16,
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
+            'Psr\\EventDispatcher\\' => 20,
+            'Psr\\Container\\' => 14,
             'Psr\\Cache\\' => 10,
+            'PhpMcp\\Server\\' => 14,
             'ParagonIE\\ConstantTime\\' => 23,
+            'PHPStan\\PhpDocParser\\' => 21,
             'PHPMailer\\PHPMailer\\' => 20,
+        ),
+        'O' => 
+        array (
+            'Opis\\Uri\\' => 9,
+            'Opis\\String\\' => 12,
+            'Opis\\JsonSchema\\' => 16,
         ),
         'M' => 
         array (
@@ -46,6 +71,14 @@ class ComposerStaticInit098df6a481c33e7a53aa0edd49960047
         array (
             'Firebase\\JWT\\' => 13,
         ),
+        'E' => 
+        array (
+            'Evenement\\' => 10,
+        ),
+        'D' => 
+        array (
+            'Doctrine\\Deprecations\\' => 22,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -53,30 +86,84 @@ class ComposerStaticInit098df6a481c33e7a53aa0edd49960047
         array (
             0 => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib',
         ),
+        'phpDocumentor\\Reflection\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+        ),
+        'Webmozart\\Assert\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/webmozart/assert/src',
+        ),
+        'Symfony\\Component\\Finder\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/finder',
+        ),
+        'React\\Stream\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/react/stream/src',
+        ),
+        'React\\EventLoop\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/react/event-loop/src',
+        ),
+        'Psr\\SimpleCache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/simple-cache/src',
+        ),
         'Psr\\Log\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/log/src',
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            1 => __DIR__ . '/..' . '/psr/http-factory/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
         ),
+        'Psr\\EventDispatcher\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/event-dispatcher/src',
+        ),
+        'Psr\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/container/src',
+        ),
         'Psr\\Cache\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/cache/src',
+        ),
+        'PhpMcp\\Server\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-mcp/server/src',
         ),
         'ParagonIE\\ConstantTime\\' => 
         array (
             0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
         ),
+        'PHPStan\\PhpDocParser\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src',
+        ),
         'PHPMailer\\PHPMailer\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
+        ),
+        'Opis\\Uri\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/opis/uri/src',
+        ),
+        'Opis\\String\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/opis/string/src',
+        ),
+        'Opis\\JsonSchema\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/opis/json-schema/src',
         ),
         'Monolog\\' => 
         array (
@@ -110,6 +197,14 @@ class ComposerStaticInit098df6a481c33e7a53aa0edd49960047
         array (
             0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
+        'Evenement\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/evenement/evenement/src',
+        ),
+        'Doctrine\\Deprecations\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/deprecations/src',
+        ),
     );
 
     public static $classMap = array (
@@ -139,9 +234,9 @@ class ComposerStaticInit098df6a481c33e7a53aa0edd49960047
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit098df6a481c33e7a53aa0edd49960047::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit098df6a481c33e7a53aa0edd49960047::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit098df6a481c33e7a53aa0edd49960047::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit5807f3d7fa8f34d3d85955863d1b8d12::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit5807f3d7fa8f34d3d85955863d1b8d12::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit5807f3d7fa8f34d3d85955863d1b8d12::$classMap;
 
         }, null, ClassLoader::class);
     }

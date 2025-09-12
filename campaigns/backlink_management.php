@@ -141,11 +141,11 @@ include_once __DIR__ . '/../includes/header.php';
                             <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
                             <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
                         </svg>
-                        Backlink Management: <?= htmlspecialchars($campaignData['name']) ?>
+                        Backlinks Management: <?= htmlspecialchars($campaignData['name']) ?>
                     </h2>
                     <div class="text-muted mt-1">
-                        <a href="<?= htmlspecialchars($campaignData['base_url']) ?>" target="_blank" class="text-reset">
-                            <?= htmlspecialchars($campaignData['base_url']) ?>
+                        <a href="https://<?php echo htmlspecialchars($campaignData['base_url']) ?>" target="_blank" class="text-reset">
+                            <?php echo htmlspecialchars($campaignData['base_url']) ?>
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-external-link ms-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                 <path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6" />
@@ -415,7 +415,7 @@ include_once __DIR__ . '/../includes/header.php';
                                     <td><input type="checkbox" class="backlink-select" value="<?= htmlspecialchars($backlink['id']) ?>"></td>
                                     <td>
                                         <?php if ($backlink['is_duplicate'] === 'yes'): ?>
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy duplicate-icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" data-bs-toggle="tooltip" title="Duplicate backlink">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-layers layers-icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" data-bs-toggle="tooltip" title="Duplicate backlink">
                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                 <path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" />
                                                 <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />

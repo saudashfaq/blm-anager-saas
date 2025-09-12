@@ -215,7 +215,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </svg>
                         Bulk Upload Backlinks for Campaign:<br>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?= htmlspecialchars($campaign['name']) ?><br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?= htmlspecialchars($campaign['base_url']) ?>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://<?= htmlspecialchars($campaign['base_url']) ?>" target="_blank">https://<?= htmlspecialchars($campaign['base_url']) ?></a>
                     </h3>
 
 
