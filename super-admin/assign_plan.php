@@ -5,11 +5,6 @@ require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../subscriptions/config/stripe.php';
 require_once __DIR__ . '/../config/subscription_plans.php';
 
-// Only allow superadmins to access this script
-if (!isset($_SESSION['is_superadmin']) || $_SESSION['is_superadmin'] !== 1) {
-    header('Location: ' . BASE_URL . 'dashboard.php?error=' . urlencode('Access denied. Superadmin privileges required.'));
-    exit;
-}
 
 function assignPlanToCompany($companyId, $planName, $pdo)
 {
@@ -22,45 +17,103 @@ function assignPlanToCompany($companyId, $planName, $pdo)
         }
 
         $planDetails = SUBSCRIPTION_LIMITS[$planName];
+        $newPlanId = getStripePlanId($planName);
 
-        // Deactivate any existing subscriptions
+        // Get current subscription details for logging
         $stmt = $pdo->prepare("
-            UPDATE company_subscriptions 
-            SET status = 'cancelled', 
-                cancelled_at = NOW() 
-            WHERE company_id = ? AND status = 'active'
+            SELECT plan_name, plan_id, status 
+            FROM company_subscriptions 
+            WHERE company_id = ?
         ");
         $stmt->execute([$companyId]);
+        $currentSubscription = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Insert new subscription
+        $oldPlanName = $currentSubscription['plan_name'] ?? null;
+        $oldPlanId = $currentSubscription['plan_id'] ?? null;
+
+        // Check if subscription exists
+        if ($currentSubscription) {
+            // Update existing subscription
+            $stmt = $pdo->prepare("
+                UPDATE company_subscriptions 
+                SET plan_id = :plan_id,
+                    plan_name = :plan_name,
+                    status = 'active',
+                    current_period_start = CURRENT_TIMESTAMP,
+                    current_period_end = DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 1 YEAR),
+                    next_billing_date = DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 1 YEAR),
+                    session_id = 'manual_assignment',
+                    verified_at = NOW(),
+                    cancelled_at = NULL,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE company_id = :company_id
+            ");
+
+            $stmt->execute([
+                'plan_id' => $newPlanId,
+                'plan_name' => $planName,
+                'company_id' => $companyId
+            ]);
+        } else {
+            // Insert new subscription (for companies without any subscription)
+            $stmt = $pdo->prepare("
+                INSERT INTO company_subscriptions (
+                    company_id,
+                    plan_id,
+                    plan_name,
+                    status,
+                    current_period_start,
+                    current_period_end,
+                    next_billing_date,
+                    session_id,
+                    verified_at
+                ) VALUES (
+                    :company_id,
+                    :plan_id,
+                    :plan_name,
+                    'active',
+                    CURRENT_TIMESTAMP,
+                    DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 1 YEAR),
+                    DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 1 YEAR),
+                    'manual_assignment',
+                    NOW()
+                )
+            ");
+
+            $stmt->execute([
+                'company_id' => $companyId,
+                'plan_id' => $newPlanId,
+                'plan_name' => $planName
+            ]);
+        }
+
+        // Log the subscription change
         $stmt = $pdo->prepare("
-            INSERT INTO company_subscriptions (
+            INSERT INTO subscription_change_logs (
                 company_id,
-                plan_id,
-                plan_name,
-                status,
-                current_period_start,
-                current_period_end,
-                next_billing_date,
-                session_id,
-                verified_at
+                old_plan_name,
+                new_plan_name,
+                old_plan_id,
+                new_plan_id,
+                change_reason,
+                changed_by_system
             ) VALUES (
                 :company_id,
-                :plan_id,
-                :plan_name,
-                'active',
-                CURRENT_TIMESTAMP,
-                DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 1 YEAR),
-                DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 1 YEAR),
+                :old_plan_name,
+                :new_plan_name,
+                :old_plan_id,
+                :new_plan_id,
                 'manual_assignment',
-                NOW()
+                'superadmin'
             )
         ");
 
         $stmt->execute([
             'company_id' => $companyId,
-            'plan_id' => getStripePlanId($planName),
-            'plan_name' => $planName
+            'old_plan_name' => $oldPlanName,
+            'new_plan_name' => $planName,
+            'old_plan_id' => $oldPlanId,
+            'new_plan_id' => $newPlanId
         ]);
 
         // Update company record
@@ -96,8 +149,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Get all companies
-$stmt = $pdo->query("SELECT id, name, subscription_plan FROM companies ORDER BY name");
+// Get only companies with free or basic plans
+$stmt = $pdo->prepare("
+    SELECT id, name, subscription_plan 
+    FROM companies 
+    WHERE subscription_plan IN ('free', 'basic') 
+    ORDER BY name
+");
+$stmt->execute();
 $companies = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Get available plans
@@ -120,6 +179,7 @@ include_once __DIR__ . '/../includes/header.php';
             <?php endif; ?>
 
             <form method="POST" action="">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                 <div class="mb-3">
                     <label for="company_id" class="form-label">Company</label>
                     <select name="company_id" id="company_id" class="form-select" required>

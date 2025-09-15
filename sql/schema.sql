@@ -171,4 +171,21 @@ CREATE TABLE IF NOT EXISTS verification_report_logs (
     created_at DATETIME NOT NULL,
     FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE,
     INDEX idx_campaign_date (campaign_id, created_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci; 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS subscription_change_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    company_id INT NOT NULL,
+    old_plan_name VARCHAR(50) NULL COMMENT 'Previous plan name',
+    new_plan_name VARCHAR(50) NOT NULL COMMENT 'New plan name',
+    old_plan_id VARCHAR(255) NULL COMMENT 'Previous Stripe Price ID',
+    new_plan_id VARCHAR(255) NOT NULL COMMENT 'New Stripe Price ID',
+    change_reason VARCHAR(255) DEFAULT 'manual_assignment' COMMENT 'Reason for change (manual_assignment, stripe_webhook, etc.)',
+    changed_by_user_id INT NULL COMMENT 'User who made the change (if applicable)',
+    changed_by_system VARCHAR(50) DEFAULT 'superadmin' COMMENT 'System component that made the change',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE,
+    FOREIGN KEY (changed_by_user_id) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_subscription_logs_company (company_id, created_at),
+    INDEX idx_subscription_logs_date (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4; 
