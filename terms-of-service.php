@@ -57,7 +57,7 @@ require_once __DIR__ . '/includes/public_navbar.php';
                     <h2 class="h4 mb-4">8. Contact Information</h2>
                     <p>For any questions regarding these Terms, please contact us at:</p>
                     <ul class="list-unstyled">
-                        <li>Email: legal@backlinksvalidator.com</li>
+                        <li>Email: support@backlinksvalidator.com</li>
                         <li>Website: backlinksvalidator.com</li>
                     </ul>
                 </section>

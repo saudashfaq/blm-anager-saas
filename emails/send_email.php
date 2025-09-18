@@ -3,12 +3,14 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+require_once __DIR__ . '/../config/config.php';
 require __DIR__ . '/../vendor/autoload.php';
 
 class MailService
 {
     protected $mailer;
     protected $config;
+    protected $lastError = null;
 
     public function __construct()
     {
@@ -34,6 +36,13 @@ class MailService
             $this->mailer->Port       = $settings['port'];
         }
 
+        if (getenv('MAIL_DEBUG') == true) {
+            $this->mailer->SMTPDebug = 2;
+            $this->mailer->Debugoutput = function ($str, $level) {
+                $this->lastError = trim(($this->lastError ? $this->lastError . "\n" : '') . $str);
+            };
+        }
+
         $this->mailer->CharSet = 'UTF-8';
         $this->mailer->setFrom(
             $settings['from_email'] ?? 'no-reply@domain.com',
@@ -44,6 +53,9 @@ class MailService
     public function send($to, $subject, $body, $isHtml = true, $cc = null, $from = null)
     {
         try {
+            $this->lastError = null;
+            $this->mailer->clearAddresses();
+            $this->mailer->clearCCs();
             $to = is_array($to) ? $to : [$to];
             foreach ($to as $recipient) {
                 $this->mailer->addAddress($recipient);
@@ -73,8 +85,14 @@ class MailService
             $this->mailer->send();
             return true;
         } catch (Exception $e) {
-            error_log("Mailer Error: " . $this->mailer->ErrorInfo);
+            $this->lastError = trim("Mailer Error: " . $this->mailer->ErrorInfo . (empty($this->mailer->ErrorInfo) ? '' : "\n") . $e->getMessage());
+            error_log($this->lastError);
             return false;
         }
+    }
+
+    public function getLastError()
+    {
+        return $this->lastError;
     }
 }
