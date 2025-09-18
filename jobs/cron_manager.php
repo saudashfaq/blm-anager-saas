@@ -53,13 +53,13 @@ $jobs = [
     ],
     'backlink_verifier' => [
         'file' => 'BacklinkVerifier.php',
-        'interval' => 2880, // minutes (15 minutes)
+        'interval' => 15, // minutes (15 minutes)
         'enabled' => true,
         'description' => 'Verifies backlinks status'
     ],
     'verification_report_emailer' => [
         'file' => 'VerificationReportEmailer.php',
-        'interval' => 2880, // minutes (24 hours)
+        'interval' => 60, // minutes (every hour)
         'enabled' => true,
         'description' => 'Sends verification report emails'
     ]
