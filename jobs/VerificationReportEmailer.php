@@ -103,7 +103,7 @@ class VerificationReportEmailer
                 <p>You can view the detailed results here:</p>
                 <p><a href='" . BASE_URL . "campaigns/backlink_management.php?campaign_id={$campaign['campaign_id']}'>View Backlinks List</a></p>
                 
-                <p>Best regards,<br>The Backlink Manager Team</p>
+                <p>Best regards,<br>The BacklinksValidator Team</p>
             ";
 
             // Send the email

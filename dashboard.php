@@ -163,7 +163,7 @@ include_once __DIR__ . '/includes/header.php';
 <div class="container mt-4">
     <?php if ($totalCampaigns == 0): ?>
         <div class="welcome-message mt-4">
-            <h2>Welcome to Your Backlink Manager!</h2>
+            <h2>Welcome to Your BacklinksValidator!</h2>
             <p>It looks like you haven't created any campaigns yet. Start by creating your first campaign to manage your backlinks effectively.</p>
             <a href="<?= BASE_URL ?>campaigns/campaign_management.php" class="btn btn-primary">Create Your First Campaign</a>
         </div>

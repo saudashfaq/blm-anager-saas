@@ -34,6 +34,10 @@ class MailService
             $this->mailer->Password   = $settings['password'];
             $this->mailer->SMTPSecure = $settings['encryption'];
             $this->mailer->Port       = $settings['port'];
+            // Enforce finite connection/IO timeout to avoid hanging on unresponsive hosts
+            $timeoutSeconds = (int)(getenv('MAIL_TIMEOUT') ?: 10);
+            $this->mailer->Timeout = $timeoutSeconds; // Applies to fsockopen and SMTP reads
+            $this->mailer->SMTPKeepAlive = false;
         }
 
         if (getenv('MAIL_DEBUG') == true) {
@@ -50,7 +54,7 @@ class MailService
         );
     }
 
-    public function send($to, $subject, $body, $isHtml = true, $cc = null, $from = null)
+    public function send($to, $subject, $body, $isHtml = true, $cc = null, $from = null, $throwOnError = false)
     {
         try {
             $this->lastError = null;
@@ -85,8 +89,26 @@ class MailService
             $this->mailer->send();
             return true;
         } catch (Exception $e) {
-            $this->lastError = trim("Mailer Error: " . $this->mailer->ErrorInfo . (empty($this->mailer->ErrorInfo) ? '' : "\n") . $e->getMessage());
+            $hostInfo = '';
+            if (isset($this->mailer->Host) && isset($this->mailer->Port)) {
+                $hostInfo = 'Host: ' . $this->mailer->Host . ', Port: ' . $this->mailer->Port;
+            }
+            $timeoutInfo = '';
+            if (isset($this->mailer->Timeout)) {
+                $timeoutInfo = ' (Timeout: ' . (int)$this->mailer->Timeout . 's)';
+            }
+            $composed = 'Mailer Error: ' . $this->mailer->ErrorInfo;
+            if (!empty($hostInfo)) {
+                $composed .= "\n" . $hostInfo . $timeoutInfo;
+            }
+            if (!empty($e->getMessage())) {
+                $composed .= "\nException: " . $e->getMessage();
+            }
+            $this->lastError = trim($composed);
             error_log($this->lastError);
+            if ($throwOnError) {
+                throw new Exception($this->lastError);
+            }
             return false;
         }
     }

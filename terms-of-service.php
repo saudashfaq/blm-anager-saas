@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/config/auth.php';
-$pageTitle = 'Terms of Service - Backlink Manager';
+$pageTitle = 'Terms of Service - BacklinksValidator';
 require_once __DIR__ . '/includes/header_minimal.php';
 require_once __DIR__ . '/includes/public_navbar.php';
 ?>
@@ -14,12 +14,12 @@ require_once __DIR__ . '/includes/public_navbar.php';
             <div class="content">
                 <section class="mb-5">
                     <h2 class="h4 mb-4">1. Acceptance of Terms</h2>
-                    <p>By accessing and using Backlink Manager, you accept and agree to be bound by the terms and provision of this agreement.</p>
+                    <p>By accessing and using BacklinksValidator, you accept and agree to be bound by the terms and provision of this agreement.</p>
                 </section>
 
                 <section class="mb-5">
                     <h2 class="h4 mb-4">2. Description of Service</h2>
-                    <p>Backlink Manager provides tools and services for managing and monitoring backlinks. We reserve the right to modify or discontinue the service at any time.</p>
+                    <p>BacklinksValidator provides tools and services for managing and monitoring backlinks. We reserve the right to modify or discontinue the service at any time.</p>
                 </section>
 
                 <section class="mb-5">
@@ -40,12 +40,12 @@ require_once __DIR__ . '/includes/public_navbar.php';
 
                 <section class="mb-5">
                     <h2 class="h4 mb-4">5. Limitation of Liability</h2>
-                    <p>Backlink Manager shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of or inability to use the service.</p>
+                    <p>BacklinksValidator shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of or inability to use the service.</p>
                 </section>
 
                 <section class="mb-5">
                     <h2 class="h4 mb-4">6. Intellectual Property</h2>
-                    <p>All content and materials available on Backlink Manager are protected by intellectual property rights. You may not use, reproduce, or distribute any content from our service without our permission.</p>
+                    <p>All content and materials available on BacklinksValidator are protected by intellectual property rights. You may not use, reproduce, or distribute any content from our service without our permission.</p>
                 </section>
 
                 <section class="mb-5">

@@ -83,7 +83,7 @@ function old($field, $default = '')
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Backlink Manager</title>
+    <title>Register - BacklinksValidator</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="<?= BASE_URL ?>images/favicon-backlinks-validator.png?v=1">

@@ -3,7 +3,7 @@
 // Ensures consistent header structure across the site
 
 // Collect page title if provided, otherwise use default
-$pageTitle = $pageTitle ?? 'Backlink Manager';
+$pageTitle = $pageTitle ?? 'BacklinksValidator';
 ?>
 <!DOCTYPE html>
 <html lang="en">

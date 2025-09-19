@@ -140,7 +140,7 @@ include_once __DIR__ . '/includes/header.php';
 
                 <div class="text-center mt-4">
                     <small class="text-muted">
-                        © <?= date('Y') ?> Backlink Manager. All rights reserved.
+                        © <?= date('Y') ?> BacklinksValidator. All rights reserved.
                     </small>
                     <div class="mt-3">
                         <a href="index.php" class="text-decoration-none text-muted">

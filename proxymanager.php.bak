@@ -293,7 +293,7 @@ include_once __DIR__ . '/includes/header.php';
                                 <meta charset="UTF-8">
                                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                                 <meta name="csrf-token" content="<?= $_SESSION['csrf_token'] ?>">
-                                <title>Proxy Manager - Backlink Manager</title>
+                                <title>Proxy Manager - BacklinksValidator</title>
                                 <link href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet">
                             </head>
 

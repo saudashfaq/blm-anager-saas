@@ -80,9 +80,9 @@ function registerUser($userData)
         // Send welcome email
         $mailService = new MailService();
         $emailBody = "
-            <h2>Welcome to Backlink Manager!</h2>
+            <h2>Welcome to BacklinksValidator!</h2>
             <p>Dear {$userData['username']},</p>
-            <p>Thank you for registering with Backlink Manager. Your account has been successfully created.</p>
+            <p>Thank you for registering with BacklinksValidator. Your account has been successfully created.</p>
             <p><strong>Company Details:</strong></p>
             <ul>
                 <li>Company Name: {$userData['company_name']}</li>
@@ -96,12 +96,12 @@ function registerUser($userData)
             </ul>
             <p>You can now log in to your account and start managing your backlinks.</p>
             <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
-            <p>Best regards,<br>The Backlink Manager Team</p>
+            <p>Best regards,<br>The BacklinksValidator Team</p>
         ";
 
         $mailService->send(
             $userData['email'],
-            'Welcome to Backlink Manager!',
+            'Welcome to BacklinksValidator!',
             $emailBody,
             true // Send as HTML
         );
