@@ -3,6 +3,9 @@ require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/validationHelper.php';
 require_once __DIR__ . '/auth/google/functions/GoogleAuth.php';
+require_once __DIR__ . '/emails/send_email.php';
+
+
 require_once __DIR__ . '/includes/registration_helper.php';
 
 // Initialize Google Auth

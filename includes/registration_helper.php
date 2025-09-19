@@ -78,9 +78,7 @@ function registerUser($userData)
         initializeUserSession($user_id, $company_id);
 
         // Send welcome email
-        require_once __DIR__ . '/../emails/send_email.php';
         $mailService = new MailService();
-
         $emailBody = "
             <h2>Welcome to Backlink Manager!</h2>
             <p>Dear {$userData['username']},</p>

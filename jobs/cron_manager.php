@@ -1,11 +1,17 @@
 <?php
 
+//TODO: need to update crontab in server to run every 5 minutes
+//TODO: purchase proxy nodeproxy
+
+
+
 /**
  * Cron Job Manager
  * 
  * This file manages the execution of scheduled jobs:
- * - BacklinkVerifier: Runs every 30 minutes
- * - ProxyScraperValidator: Runs every 6 hours
+ * - BacklinkVerifier: Runs every 15 minutes
+ * - Verification completed emails are sent every 15 minutes as well
+ * - ProxyScraperValidator: Runs every 24 hours
  * 
  * This file should be called by the system cron job every 5 minutes
  * It will check if each job is due to run and execute it accordingly
