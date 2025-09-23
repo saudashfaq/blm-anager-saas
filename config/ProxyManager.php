@@ -31,10 +31,12 @@ class ProxyManager
 
     private function saveProxies(): void
     {
-        if (file_put_contents(self::PROXY_FILE, json_encode($this->proxies, JSON_PRETTY_PRINT)) === false) {
-            error_log("Failed to write to " . self::PROXY_FILE);
-            echo "Failed to write to " . self::PROXY_FILE;
-            die('stopped');
+        if (file_exists(self::PROXY_FILE)) {
+            if (file_put_contents(self::PROXY_FILE, json_encode($this->proxies, JSON_PRETTY_PRINT)) === false) {
+                error_log("Failed to write to " . self::PROXY_FILE);
+                echo "Failed to write to " . self::PROXY_FILE;
+                die('stopped');
+            }
         }
     }
 
